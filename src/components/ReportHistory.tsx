@@ -1,10 +1,12 @@
-import { PencilIcon, PencilSquareIcon, PrinterIcon } from "@heroicons/react/16/solid";
-import { IconButton } from "@material-tailwind/react";
 
-export default function ReportList() {
+export default function ReportHistory() {
 
     return (<div className="flex-1/2 m-4 object-top-left">
         <div className="w-full flex justify-between items-center mb-3 mt-1 pl-3">
+            <div>
+                <h3 className="text-lg font-semibold text-slate-800">History Rapot</h3>
+                <p className="text-slate-500">Rapot-rapot terdahulu.</p>
+            </div>
             <div className="ml-3">
                 <div className="w-full max-w-sm min-w-[200px] relative">
                     <div className="relative">
@@ -55,13 +57,7 @@ export default function ReportList() {
                         </th>
                         <th className="p-4 border-b border-slate-300 bg-slate-50">
                             <p className="block text-sm font-normal leading-none text-slate-500">
-                                Titi Mangsa
-                            </p>
-                        </th>
-                        <th className="p-4 border-b border-slate-300 bg-slate-50">
-                            <p className="block text-sm font-normal leading-none text-slate-500">
-                                Aksi
-                            </p>
+                                Titi Mangsa                            </p>
                         </th>
                     </tr>
                 </thead>
@@ -81,18 +77,6 @@ export default function ReportList() {
                         </td>
                         <td className="p-4 border-b border-slate-200 py-5">
                             <p className="text-sm text-slate-500">2024-08-15</p>
-                        </td>
-
-                        <td className="p-4 border-b border-slate-200 py-5">
-                            <p className="text-sm text-slate-500">2024-08-15</p>
-                        </td>
-                        <td className="border-b border-slate-200">
-                            <IconButton className="bg-green-500 w-12 h-12 content-center" >
-                                <PencilSquareIcon className="h-8 w-8" color="white" />
-                            </IconButton>
-                            <IconButton className="bg-blue-500 w-12 h-12">
-                                <PrinterIcon className="w-8 h-8" color="white" />
-                            </IconButton>
                         </td>
                     </tr>
                 </tbody>

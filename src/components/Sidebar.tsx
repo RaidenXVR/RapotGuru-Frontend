@@ -34,7 +34,7 @@ export function Sidebar() {
     const navigate = useNavigate();
 
     return (<div
-        className={`transition-all duration-300 bg-green-600 text-white ${isDrawerOpen ? "w-64" : "w-18"
+        className={`transition-all duration-300 bg-gray-900 text-white ${isDrawerOpen ? "w-64" : "w-18"
             }`}
     >
         <div className="flex justify-center p-2">
@@ -51,9 +51,9 @@ export function Sidebar() {
         <div className="">
             <List className="flex-col p-0">
 
-                <ListItem>
+                <ListItem onClick={() => navigate('/school-profile')}>
                     {isDrawerOpen ?
-                        (<Card className="w-full align-middle h-14 flex-row hover:bg-blue-700 pl-3 pt-2" color="transparent">
+                        (<Card className="w-full align-middle h-14 flex-row hover:bg-gray-950 pl-3 pt-2" color="transparent">
                             <ListItemPrefix className="h-8 w-8 justify-center">
                                 <BuildingLibraryIcon color="white" />
                             </ListItemPrefix>
@@ -61,7 +61,7 @@ export function Sidebar() {
                                 <h3 >Profil Sekolah</h3>
                             </Typography>
                         </Card>) :
-                        (<ListItemPrefix className="h-12 w-12 hover:bg-blue-700 rounded-sm">
+                        (<ListItemPrefix className="h-12 w-12 hover:bg-gray-950 rounded-sm">
                             <BuildingLibraryIcon color="white" />
                         </ListItemPrefix>)
                     }
@@ -69,7 +69,7 @@ export function Sidebar() {
 
                 <ListItem>
                     {isDrawerOpen ?
-                        (<Card className="w-full align-middle h-14 flex-row hover:bg-blue-700 pl-3 pt-2" color="transparent">
+                        (<Card className="w-full align-middle h-14 flex-row hover:bg-gray-950 pl-3 pt-2" color="transparent">
                             <ListItemPrefix className="h-8 w-8 justify-center">
                                 <UserCircleIcon color="white" />
                             </ListItemPrefix>
@@ -77,15 +77,15 @@ export function Sidebar() {
                                 <h3 >Profil Guru</h3>
                             </Typography>
                         </Card>) :
-                        (<ListItemPrefix className="h-12 w-12 hover:bg-blue-700 rounded-sm">
+                        (<ListItemPrefix className="h-12 w-12 hover:bg-gray-950 rounded-sm">
                             <UserCircleIcon color="white" />
                         </ListItemPrefix>)
                     }
                 </ListItem>
-                <hr className="p-3 my-2 m-4 border-green-900"></hr>
-                <ListItem>
+                <hr className="p-3 my-2 m-4 border-gray-700"></hr>
+                <ListItem onClick={() => navigate('/')}>
                     {isDrawerOpen ?
-                        (<Card className="w-full align-middle h-14 flex-row hover:bg-blue-700 pl-3 pt-2" color="transparent">
+                        (<Card className="w-full align-middle h-14 flex-row hover:bg-gray-950 pl-3 pt-2" color="transparent">
                             <ListItemPrefix className="h-8 w-8">
                                 <HomeIcon color="white" />
                             </ListItemPrefix>
@@ -93,14 +93,14 @@ export function Sidebar() {
                                 <h3>Dashboard</h3>
                             </Typography>
                         </Card>) :
-                        (<ListItemPrefix className="h-12 w-12 hover:bg-blue-700 rounded-sm">
+                        (<ListItemPrefix className="h-12 w-12 hover:bg-gray-950 rounded-sm">
                             <HomeIcon />
                         </ListItemPrefix>)
                     }
                 </ListItem>
                 <ListItem onClick={() => navigate('/report-cards')}>
                     {isDrawerOpen ?
-                        (<Card className="w-full align-middle h-14 flex-row hover:bg-blue-700 pl-3 pt-2" color="transparent">
+                        (<Card className="w-full align-middle h-14 flex-row hover:bg-gray-950 pl-3 pt-2" color="transparent">
                             <ListItemPrefix className="h-8 w-8 justify-center">
                                 <BookOpenIcon color="white" />
                             </ListItemPrefix>
@@ -108,7 +108,7 @@ export function Sidebar() {
                                 <h3 >Rapot</h3>
                             </Typography>
                         </Card>) :
-                        (<ListItemPrefix className="h-12 w-12 hover:bg-blue-700 rounded-sm">
+                        (<ListItemPrefix className="h-12 w-12 hover:bg-gray-950 rounded-sm">
                             <BookOpenIcon color="white" />
                         </ListItemPrefix>)
                     }
