@@ -50,7 +50,7 @@ export function Sidebar() {
         </div>
         <div className="">
             <List className="flex-col p-0">
-
+                {/* 
                 <ListItem onClick={() => navigate('/school-profile')}>
                     {isDrawerOpen ?
                         (<Card className="w-full align-middle h-14 flex-row hover:bg-gray-950 pl-3 pt-2" color="transparent">
@@ -65,9 +65,9 @@ export function Sidebar() {
                             <BuildingLibraryIcon color="white" />
                         </ListItemPrefix>)
                     }
-                </ListItem>
+                </ListItem> */}
 
-                <ListItem>
+                <ListItem onClick={() => navigate("/profile")}>
                     {isDrawerOpen ?
                         (<Card className="w-full align-middle h-14 flex-row hover:bg-gray-950 pl-3 pt-2" color="transparent">
                             <ListItemPrefix className="h-8 w-8 justify-center">

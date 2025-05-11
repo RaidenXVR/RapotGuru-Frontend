@@ -8,8 +8,9 @@ import { School } from "../types/School";
 import { useUser } from "../context/userContext";
 import { useNavigate } from "react-router-dom";
 import { User } from "../types/User";
+import TeacherProfile from "./TeacherProfile";
 
-export default function SchoolProfileEdit() {
+export default function ProfileEdit() {
 
     const [schools, setSchools] = useState<School[]>([]);
     const [loading, setLoading] = useState(true);
@@ -52,7 +53,7 @@ export default function SchoolProfileEdit() {
         setLoading(true);
 
         Promise.all([
-            getUserData('123456789'),
+            getUserData('1234567890'),
             getSchoolList()
         ])
             .then(([userData, schoolData]) => {
@@ -71,17 +72,19 @@ export default function SchoolProfileEdit() {
     if (loading) return <div>Loading schools...</div>;
     if (error) return <div>{error}</div>;
 
-    const handleChangeSchool = (newSchool: School) => {
-        const newUser: User = { name: user!!.name, nip: user!!.nip, npsn: newSchool.npsn };
-        setUser(newUser)
-    }
 
     return (
         <div>
 
+            <TeacherProfile />
+            <div className="w-full top-0 right-0 flex-col-reverse">
+                <Button onClick={() => navigate("/profile/edit-teacher")} className="flex top-0 right-0 ml-3 object-right p-3 bg-green-500">
+                    <h1>Edit Profil Guru</h1>
+                </Button>
+            </div>
             <SchoolProfile />
             <div className="w-full top-0 right-0 flex-col-reverse">
-                <Button onClick={() => navigate("/school-profile/new")} className="flex top-0 right-0 ml-3 object-right p-3 bg-green-500">
+                <Button onClick={() => navigate("/profile/new-school")} className="flex top-0 right-0 ml-3 object-right p-3 bg-green-500">
                     <h1>+ Tambah Profil Sekolah</h1>
                 </Button>
             </div>
@@ -177,7 +180,7 @@ export default function SchoolProfileEdit() {
                                     <td className="border-b border-slate-200">
                                         {user?.npsn == school.npsn ?
                                             (<IconButton className="bg-green-500 w-12 h-12 content-center"
-                                                onClick={() => navigate('/school-profile/edit', { state: { oldProfile: school } })}
+                                                onClick={() => navigate('/profile/edit-school', { state: { oldProfile: school } })}
                                             >
                                                 <PencilSquareIcon className="h-8 w-8" color="white" />
                                             </IconButton>) :

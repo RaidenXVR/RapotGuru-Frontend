@@ -5,11 +5,12 @@ import TeacherProfile from './components/TeacherProfile';
 import { Route, Routes } from 'react-router-dom'
 import ReportCards from './components/ReportCards';
 import ReportHistory from './components/ReportHistory';
-import SchoolProfileEdit from './components/SchoolProfileEdit';
+import ProfileEdit from './components/ProfileEdit';
 import { useUser } from './context/userContext';
 import { useEffect, useState } from 'react';
 import { getUserData } from './api/schoolApi';
 import EditSchoolProfile from './components/EditSchoolProfile';
+import TeacherProfileEdit from './components/TeacherProfileEdit';
 
 export default function App() {
 	const { setUser } = useUser();
@@ -47,10 +48,11 @@ export default function App() {
 						</div>
 						<ReportHistory />
 					</div>} />
-					<Route path='/school-profile' element={<SchoolProfileEdit />} />
+					<Route path='/profile' element={<ProfileEdit />} />
+					<Route path='/profile/new-school' element={<EditSchoolProfile />} />
+					<Route path='/profile/edit-school' element={<EditSchoolProfile />} />
+					<Route path='/profile/edit-teacher' element={<TeacherProfileEdit />} />
 					<Route path='/report-cards' element={<ReportCards />} />
-					<Route path='/school-profile/new' element={<EditSchoolProfile />} />
-					<Route path='/school-profile/edit' element={<EditSchoolProfile />} />
 				</Routes>
 			</div>
 		</div>
