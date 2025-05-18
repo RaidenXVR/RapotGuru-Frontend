@@ -3,11 +3,11 @@ import Button from "@material-tailwind/react/components/Button";
 import IconButton from "@material-tailwind/react/components/IconButton";
 import SchoolProfile from "./SchoolProfile";
 import { useEffect, useMemo, useState } from "react";
-import { getSchoolList, getUserData, setUserSchool } from "../api/schoolApi";
+import { getSchoolList, setUserSchool } from "../api/schoolApi";
+import { getUserData, } from "../api/userApi"
 import { School } from "../types/School";
 import { useUser } from "../context/userContext";
 import { useNavigate } from "react-router-dom";
-import { User } from "../types/User";
 import TeacherProfile from "./TeacherProfile";
 
 export default function ProfileEdit() {
@@ -53,7 +53,7 @@ export default function ProfileEdit() {
         setLoading(true);
 
         Promise.all([
-            getUserData('1234567890'),
+            getUserData('123456789'),
             getSchoolList()
         ])
             .then(([userData, schoolData]) => {

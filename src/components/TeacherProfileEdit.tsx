@@ -1,9 +1,8 @@
 import { Button, Card, Input, Typography } from "@material-tailwind/react";
-import TeacherProfile from "./TeacherProfile";
 import { useUser } from "../context/userContext";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { setUserData } from "../api/schoolApi";
+import { setUserData } from "../api/userApi";
 
 export default function TeacherProfileEdit() {
     const { user } = useUser();

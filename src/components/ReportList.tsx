@@ -1,7 +1,31 @@
 import { PencilIcon, PencilSquareIcon, PrinterIcon } from "@heroicons/react/16/solid";
 import { IconButton } from "@material-tailwind/react";
+import { useEffect, useState } from "react";
+import { ReportData } from "../types/Report";
+import { useNavigate } from "react-router-dom";
+import { getReportsByUser } from "../api/reportApi";
+import { useUser } from "../context/userContext";
 
 export default function ReportList() {
+
+    const [reports, setReports] = useState<ReportData[]>([]);
+    const { user } = useUser();
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        getReportsByUser(user!.nip).then((val) => {
+            setReports(val);
+            console.log("Reports: ", val);
+            setLoading(false);
+        }).catch((err) => {
+            console.log(err);
+            setError("Error fetching Reports.");
+            setLoading(false)
+        })
+    }, [])
 
     return (<div className="flex-1/2 m-4 object-top-left">
         <div className="w-full flex justify-between items-center mb-3 mt-1 pl-3">
@@ -65,38 +89,44 @@ export default function ReportList() {
                         </th>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr className="hover:bg-slate-50">
+                <tbody>{reports?.map((rep, idx) => (
+                    < tr key={idx} className="hover:bg-slate-50">
                         <td className="p-4 border-b border-slate-200 py-5">
-                            <p className="block font-semibold text-sm text-slate-800">R001A-20240503</p>
+                            <p className="block font-semibold text-sm text-slate-800">{rep.report_id}</p>
                         </td>
                         <td className="p-4 border-b border-slate-200 py-5">
-                            <p className="text-sm text-slate-500">1A</p>
+                            <p className="text-sm text-slate-500">{rep.class}</p>
                         </td>
                         <td className="p-4 border-b border-slate-200 py-5">
-                            <p className="text-sm text-slate-500">A</p>
+                            <p className="text-sm text-slate-500">{rep.phase}</p>
                         </td>
                         <td className="p-4 border-b border-slate-200 py-5">
-                            <p className="text-sm text-slate-500">2024</p>
+                            <p className="text-sm text-slate-500">{rep.school_year}</p>
                         </td>
                         <td className="p-4 border-b border-slate-200 py-5">
-                            <p className="text-sm text-slate-500">2024-08-15</p>
+                            <p className="text-sm text-slate-500">{rep.semester}</p>
                         </td>
 
                         <td className="p-4 border-b border-slate-200 py-5">
-                            <p className="text-sm text-slate-500">2024-08-15</p>
+                            <p className="text-sm text-slate-500">{rep.deadline}</p>
                         </td>
                         <td className="border-b border-slate-200">
-                            <IconButton className="bg-green-500 w-12 h-12 content-center" >
-                                <PencilSquareIcon className="h-8 w-8" color="white" />
+                            <IconButton className="bg-green-500 w-12 h-12 content-center"
+                                onClick={() => navigate(`/report-cards/edit/${rep.report_id}`)}
+                            >
+                                <PencilSquareIcon className="h-8 w-8" color="white"
+                                />
                             </IconButton>
                             <IconButton className="bg-blue-500 w-12 h-12">
                                 <PrinterIcon className="w-8 h-8" color="white" />
                             </IconButton>
                         </td>
                     </tr>
+                ))
+
+                }
                 </tbody>
             </table>
         </div>
-    </div>);
+    </div >);
 }
