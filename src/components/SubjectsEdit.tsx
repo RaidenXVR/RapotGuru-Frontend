@@ -1,7 +1,7 @@
 import { PencilSquareIcon, TrashIcon } from "@heroicons/react/16/solid";
 import { Button, Card, IconButton } from "@material-tailwind/react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { Subject } from "../types/Subject";
+import type { Subject } from "../types/Subject";
 import { useEffect, useState } from "react";
 import { getSubjectsByReport, removeSubjectByID } from "../api/reportApi";
 import { v4 as uuidv4 } from "uuid";
@@ -42,14 +42,18 @@ export default function SubjectsEdit() {
     return (
         <div className="flex flex-col">
             <div className="flex flex-row">
-                <Card className="m-4">
-                    <Button className="p-3 bg-green-600"
+                <Card className="m-4 w-fit">
+                    <Button
+                        variant="ghost"
+                        className="p-3 bg-green-600"
                         onClick={handleNewMaPel}
                     >
                         <p>Tambah Mata Pelajaran</p>
                     </Button>
                 </Card>
-                <Card className="m-4">
+                <Card
+                    variant="ghost"
+                    className="m-4 w-fit">
                     <Button className="p-3 bg-blue-600"
                         onClick={() => navigate(`..`)}
                     >
@@ -111,8 +115,10 @@ export default function SubjectsEdit() {
                             <td className="p-4 border-b border-slate-200 py-5">
                                 <p className="text-sm text-slate-500">{sub.subject_category}</p>
                             </td>
-                            <td className="border-b border-slate-200">
-                                <IconButton className="bg-green-500 w-12 h-12 content-center"
+                            <td className=" border-b border-slate-200">
+                                <IconButton
+                                    variant="ghost"
+                                    className="bg-green-500 w-12 h-12"
                                     onClick={() => navigate(`/report-cards/edit/${sub.report_id}/subjects/edit`, { state: { subjects: subjects, currentSubject: sub, report_id: report_id } })}
                                 >
                                     <PencilSquareIcon className="h-8 w-8" color="white"
@@ -120,8 +126,10 @@ export default function SubjectsEdit() {
                                 </IconButton>
 
                             </td>
-                            <td className="p-4 border-b border-slate-200 py-5">
-                                <IconButton className="bg-red-500 w-12 h-12"
+                            <td className="flex justify-start border-b border-slate-200 py-5">
+                                <IconButton
+                                    variant="ghost"
+                                    className="bg-red-500 w-12 h-12"
                                     onClick={() => handleSubjectDelete(sub)}>
                                     <TrashIcon className="w-8 h-8" color="white" />
                                 </IconButton>

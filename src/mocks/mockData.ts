@@ -1,12 +1,20 @@
-import { Student } from "../types/Student";
-import { ReportData } from '../types/Report';
-import { Subject } from "../types/Subject";
-import { CP } from "../types/CP";
-import { Extra } from "../types/Extra";
-import { ExtraMark } from "../types/MarkTypes";
+import type { Student } from "../types/Student";
+import type { ReportData } from '../types/Report';
+import type { Subject } from "../types/Subject";
+import type { CP } from "../types/CP";
+import type { Extra } from "../types/Extra";
+import type { ExtraMark, SubjectMarks } from "../types/MarkTypes";
+import type { NotesAttendance } from "../types/NotesAttendance";
+import type { User } from "../types/User";
+import type { School } from "../types/School";
 
 
-export let schools = [
+export let users: User[] = [
+    { nip: "123456789", name: "Budi Santoso", npsn: "12345678", username: "budisantoso", password: "password123" },
+    { nip: "987654321", name: "N. Imas Susilawati", npsn: "87654321", username: "susilawatiimas", password: "password456" },
+]
+
+export let schools: School[] = [
     {
         dinasPendidikan: "Dinas Pendidikan Kota A",
         satuanPendidikan: "SMA Negeri 1 Kota A",
@@ -20,7 +28,9 @@ export let schools = [
         kodePos: "12345",
         website: "http://sman1kotaa.sch.id",
         email: "info@sman1kotaa.sch.id",
-        telp: "021-1234567"
+        telp: "021-1234567",
+        kepalaSekolah: "Asep Hidayat",
+        nipKepalaSekolah: "123456789"
     },
     {
         dinasPendidikan: "Dinas Pendidikan Kabupaten B",
@@ -35,7 +45,9 @@ export let schools = [
         kodePos: "67890",
         website: "http://smpn2kabupatenb.sch.id",
         email: "contact@smpn2kabupatenb.sch.id",
-        telp: "022-7654321"
+        telp: "022-7654321",
+        kepalaSekolah: "Hendri Prabowo",
+        nipKepalaSekolah: "987654321"
     }
 ]
 
@@ -207,6 +219,67 @@ export let cps: CP[] = [
     }
 
 ]
+
+export let subject_marks: {
+    mark_id: string;
+    value: number;
+    student_id: string;
+    subject_id: string;
+    cp_id?: string; // present if CP mark
+    type?: 'test' | 'non_test'; // present if test/non_test mark
+}[] = [
+        // CP marks for subject SUB001
+        { mark_id: "m1", value: 85, student_id: "S001", subject_id: "SUB001", cp_id: "af87-76ab" },
+        { mark_id: "m2", value: 78, student_id: "S002", subject_id: "SUB001", cp_id: "af87-76ab" },
+        { mark_id: "m3", value: 92, student_id: "S003", subject_id: "SUB001", cp_id: "af87-76ab" },
+
+        { mark_id: "m4", value: 88, student_id: "S001", subject_id: "SUB001", cp_id: "af87-df31" },
+        { mark_id: "m5", value: 74, student_id: "S002", subject_id: "SUB001", cp_id: "af87-df31" },
+        { mark_id: "m6", value: 90, student_id: "S003", subject_id: "SUB001", cp_id: "af87-df31" },
+
+        { mark_id: "m7", value: 91, student_id: "S001", subject_id: "SUB001", cp_id: "af87-54da" },
+        { mark_id: "m8", value: 80, student_id: "S002", subject_id: "SUB001", cp_id: "af87-54da" },
+        { mark_id: "m9", value: 87, student_id: "S003", subject_id: "SUB001", cp_id: "af87-54da" },
+
+        // Other marks for subject SUB001
+        { mark_id: "m10", value: 82, student_id: "S001", subject_id: "SUB001", type: "test" },
+        { mark_id: "m11", value: 75, student_id: "S002", subject_id: "SUB001", type: "test" },
+        { mark_id: "m12", value: 89, student_id: "S003", subject_id: "SUB001", type: "test" },
+
+        { mark_id: "m13", value: 80, student_id: "S001", subject_id: "SUB001", type: "non_test" },
+        { mark_id: "m14", value: 77, student_id: "S002", subject_id: "SUB001", type: "non_test" },
+        { mark_id: "m15", value: 85, student_id: "S003", subject_id: "SUB001", type: "non_test" }
+    ];
+
+export let notes_attendance: NotesAttendance[] = [
+    {
+        id: "na1",
+        report_id: "1234",
+        student_id: "S001",
+        notes: "Siswa aktif dan rajin.",
+        sick: 2,
+        leave: 1,
+        alpha: 0
+    },
+    {
+        id: "na2",
+        report_id: "1234",
+        student_id: "S002",
+        notes: "Perlu meningkatkan kehadiran.",
+        sick: 1,
+        leave: 0,
+        alpha: 2
+    },
+    {
+        id: "na3",
+        report_id: "1234",
+        student_id: "S003",
+        notes: "Siswa disiplin dan hadir penuh.",
+        sick: 0,
+        leave: 0,
+        alpha: 0
+    }
+];
 
 export let extras: Extra[] = []
 

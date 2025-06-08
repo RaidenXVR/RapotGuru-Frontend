@@ -6,9 +6,7 @@ export default function TeacherProfile() {
     return (
         <div className="flex-1/2  m-4 object-top-right">
             <Typography className="justify-center align-middle">
-                <h1>
-                    <strong>Profil Guru</strong>
-                </h1>
+                <strong>Profil Guru</strong>
             </Typography>
             <div
                 className="relative flex flex-col w-full h-fit overflow-scroll text-gray-700 bg-white shadow-md bg-clip-border rounded-xl">

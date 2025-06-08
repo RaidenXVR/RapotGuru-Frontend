@@ -1,11 +1,11 @@
 import { CheckIcon, PencilSquareIcon } from "@heroicons/react/16/solid";
-import Button from "@material-tailwind/react/components/Button";
-import IconButton from "@material-tailwind/react/components/IconButton";
+import { Button } from "@material-tailwind/react";
+import { IconButton } from "@material-tailwind/react";
 import SchoolProfile from "./SchoolProfile";
 import { useEffect, useMemo, useState } from "react";
 import { getSchoolList, setUserSchool } from "../api/schoolApi";
 import { getUserData, } from "../api/userApi"
-import { School } from "../types/School";
+import type { School } from "../types/School";
 import { useUser } from "../context/userContext";
 import { useNavigate } from "react-router-dom";
 import TeacherProfile from "./TeacherProfile";
@@ -78,13 +78,18 @@ export default function ProfileEdit() {
 
             <TeacherProfile />
             <div className="w-full top-0 right-0 flex-col-reverse">
-                <Button onClick={() => navigate("/profile/edit-teacher")} className="flex top-0 right-0 ml-3 object-right p-3 bg-green-500">
+                <Button
+                    variant="ghost"
+                    onClick={() => navigate("/profile/edit-teacher")} className="flex top-0 right-0 ml-3 object-right p-3 bg-green-500">
                     <h1>Edit Profil Guru</h1>
                 </Button>
             </div>
             <SchoolProfile />
-            <div className="w-full top-0 right-0 flex-col-reverse">
-                <Button onClick={() => navigate("/profile/new-school")} className="flex top-0 right-0 ml-3 object-right p-3 bg-green-500">
+            <div className="m-3 flex w-full">
+                <Button
+                    variant="ghost"
+                    onClick={() => navigate("/profile/new-school")}
+                    className="flex top-0 right-0 ml-3 object-right p-3 bg-green-500">
                     <h1>+ Tambah Profil Sekolah</h1>
                 </Button>
             </div>
@@ -179,12 +184,16 @@ export default function ProfileEdit() {
                                     </td>
                                     <td className="border-b border-slate-200">
                                         {user?.npsn == school.npsn ?
-                                            (<IconButton className="bg-green-500 w-12 h-12 content-center"
+                                            (<IconButton
+                                                variant="ghost"
+                                                className="bg-green-500 w-12 h-12 content-center"
                                                 onClick={() => navigate('/profile/edit-school', { state: { oldProfile: school } })}
                                             >
                                                 <PencilSquareIcon className="h-8 w-8" color="white" />
                                             </IconButton>) :
-                                            (<IconButton className="bg-blue-500 w-12 h-12 content-center"
+                                            (<IconButton
+                                                variant="ghost"
+                                                className="bg-blue-500 w-12 h-12 content-center"
                                                 onClick={async () => {
                                                     await setUserSchool(user!!.nip, school.npsn);
                                                     const newUser = await getUserData(user!!.nip);
@@ -226,7 +235,8 @@ export default function ProfileEdit() {
                                 Next
                             </button>
                         </div>
-                        }                    </table>
+                        }
+                    </table>
                 </div>
             </div>
         </div >

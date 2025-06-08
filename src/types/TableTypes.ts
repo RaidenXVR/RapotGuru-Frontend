@@ -13,7 +13,7 @@ export interface ExtraTableType {
 
 export interface ExtraMarkTableType {
     key?: string;
-    student_id: string;
+    student_id?: string;
     extra_mark_id?: string;
     name: string;
     mark?: number;
@@ -23,7 +23,7 @@ export interface ExtraMarkTableType {
 }
 
 export interface StudentTableType {
-    student_id: string;
+    key?: string;
     name: string;
     nis: string;
     nisn: string;
@@ -47,3 +47,22 @@ export interface StudentTableType {
     phone_num: string;
 }
 
+export interface SubjectMarksTableTypes {
+    key?: string;
+    student_id: string;
+    name: string;
+    test?: number;
+    non_test?: number;
+    [cpKey: string]: number | string | undefined;
+}
+
+export interface NotesAttendanceTableType {
+    key?: string;
+    student_id: string;
+    notes_id?: string;
+    name: string;
+    sick?: number;
+    leave?: number;
+    alpha?: number;
+    notes?: string;
+}

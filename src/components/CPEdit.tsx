@@ -1,10 +1,10 @@
-import { Button, Card, Input, Option, Select, DialogHeader, DialogBody, DialogFooter, Dialog } from "@material-tailwind/react";
+import { Button, Card, Input, Select, Dialog, SelectOption } from "@material-tailwind/react";
 import { data, useLocation, useNavigate } from "react-router-dom";
-import { Subject } from "../types/Subject";
+import type { Subject } from "../types/Subject";
 import { useEffect, useRef, useState } from "react";
-import SpreadsheetTable, { TableGridRef } from "./SpreadsheetTable";
-import { CP } from "../types/CP";
-import { CPTableType, ExtraTableType } from "../types/TableTypes";
+import SpreadsheetTable, { type TableGridRef } from "./SpreadsheetTable";
+import type { CP } from "../types/CP";
+import type { CPTableType, ExtraMarkTableType, ExtraTableType, StudentTableType } from "../types/TableTypes";
 import { getCPBySubjectID, setCPBySubjectID, setSubjectByReport } from "../api/reportApi";
 
 
@@ -63,7 +63,7 @@ export default function CPEdit() {
         })
     }, [])
 
-    const handleTableChange = (updatedData: (CPTableType | ExtraTableType)[]) => {
+    const handleTableChange = (updatedData: (CPTableType | ExtraTableType | ExtraMarkTableType | StudentTableType)[]) => {
         console.log("Updated Table Data:", updatedData);
         // Save to state, send to server, etc.
         setCpChanged(updatedData as CPTableType[]);
@@ -73,8 +73,6 @@ export default function CPEdit() {
         //do save to db
         const tobeUpdateCP: CP[] = cpChanged.filter((val) => val.no !== 0 && val.desc !== "").map((val) => {
             const inCP = cps.filter((c) => c.cp_num == String(val.no))
-            console.log("VAL save table changes:", val)
-            console.log("inCP save table changes:", inCP)
             if (inCP.length !== 0) {
                 return { cp_id: inCP[0].cp_id, cp_num: String(val.no), cp_desc: val.desc, subject_id: currentSubject.subject_id } as CP
             }
@@ -138,49 +136,60 @@ export default function CPEdit() {
     };
     return (
         <div className="flex flex-col  m-4">
-            <Dialog open={open} handler={handleOpen} className="w-1/2 justify-center">
-                <DialogHeader>Anda yakin ingin kembali?</DialogHeader>
-                <DialogBody>
-                    Terdapat perubahan yang belum disimpan. Apakah Anda yakin ingin kembali tanpa menyimpan perubahan?
-                </DialogBody>
-                <DialogFooter>
-                    <Button
-                        variant="text"
-                        color="red"
-                        onClick={handleOpen}
-                        className="p-3 mr-1 bg-red-600"
-                    >
-                        <span>Batal</span>
-                    </Button>
-                    <Button
-                        variant="gradient"
-                        color="green"
-                        onClick={handleConfirmKembali}
-                        className=" p-3 bg-green-600"
-                    >
-                        <span>Kembali</span>
-                    </Button>
-                </DialogFooter>
+            {/* className="w-1/2 justify-center" */}
+            <Dialog open={open}>
+                <Dialog.Overlay>
+                    <Dialog.Content>
+                        <Card className="m-3 p-3 w-full">
+                            Terdapat perubahan yang belum disimpan. Apakah Anda yakin ingin kembali tanpa menyimpan perubahan?
+                        </Card>
+                        <div className="w-full flex justify-evenly p-4">
+                            <Dialog.DismissTrigger>
+                                <Button
+                                    variant="solid"
+                                    color="primary"
+                                    onClick={handleOpen}
+                                    className="p-3 mr-1 bg-green-600"
+                                >
+                                    <span>Lanjutkan</span>
+                                </Button>
+                                <Button
+                                    variant="gradient"
+                                    color="error"
+                                    onClick={handleConfirmKembali}
+                                    className=" p-3 bg-red-600"
+                                >
+                                    <span>Kembali Ke List</span>
+                                </Button>
+                            </Dialog.DismissTrigger>
+                        </div>
+                    </Dialog.Content>
+                </Dialog.Overlay>
             </Dialog>
 
             <div className="flex flex-row">
-                <Card className="m-4" onClick={saveTableChanges}>
-                    <Button className="p-3 bg-green-600"
+                <div className="m-4 w-fit" onClick={saveTableChanges}>
+                    <Button
+                        variant="ghost"
+
+                        className="p-3 bg-green-600"
                     >
-                        <p>Simpan Perubahan</p>
+                        <p className="text-white">Simpan Perubahan</p>
                     </Button>
-                </Card>
-                <Card className="m-4">
-                    <Button className="p-3 bg-blue-600"
+                </div>
+                <div className="m-4 w-fit">
+                    <Button
+                        variant="ghost"
+                        className="p-3 bg-blue-600"
                         onClick={handleKembali}
                     >
-                        <p>Kembali</p>
+                        <p className="text-white">Kembali</p>
                     </Button>
-                </Card>
+                </div>
             </div>
             <div className="relative flex flex-col m-4 w- h-fit overflow-visible text-gray-700 bg-white shadow-md bg-clip-border rounded-xl">
 
-                <Card className="rounded-xl m-4" shadow={false}>
+                <div className=" m-4">
                     <table className="w-full text-center table-auto min-w-max">
                         <tr>
                             <th className="p-4 border-b border-slate-300 bg-slate-50">
@@ -198,7 +207,6 @@ export default function CPEdit() {
                                 <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
                                     <Input
                                         className="rounded-lg p-2"
-                                        crossOrigin={undefined}
                                         onChange={(e) => setSubjectName(e.target.value)}
                                         value={subjectName}
                                     />
@@ -207,7 +215,7 @@ export default function CPEdit() {
 
                             <td className="p-4">
                                 <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
-                                    <Input className="rounded-lg p-2" crossOrigin={undefined}
+                                    <Input className="rounded-lg p-2"
                                         onChange={(e) => {
                                             const cleaned = e.target.value.replace(/\D/g, "");
                                             setSubjectMinMark(Number(cleaned));
@@ -221,31 +229,33 @@ export default function CPEdit() {
                             <td className="p-4">
                                 <div className="text-sm">
                                     <Select
-                                        label="Pilih Kategori..."
-                                        color="blue"
+                                        color="primary"
                                         variant="outlined"
-                                        className="w-full rounded-lg"
                                         value={subjectCategory}
-                                        onChange={(e) => setSubjectCategory(e as "Kelompok A" | "Kelompok B" | "Muatan Lokal")}
+                                        onValueChange={(e: any) => setSubjectCategory(e as "Kelompok A" | "Kelompok B" | "Muatan Lokal")}
                                     >
-                                        <Option key={"001"} value="Kelompok A">Kelompok A</Option>
-                                        <Option key={"002"} value="Kelompok B">Kelompok B</Option>
-                                        <Option key={"003"} value="Muatan Lokal">Muatan Lokal</Option>
+                                        <Select.Trigger className="w-full rounded-lg" placeholder="Pilih Kategori..." />
+                                        <Select.List>
+                                            <Select.Option key={"001"} value="Kelompok A">Kelompok A</Select.Option>
+                                            <Select.Option key={"002"} value="Kelompok B">Kelompok B</Select.Option>
+                                            <Select.Option key={"003"} value="Muatan Lokal">Muatan Lokal</Select.Option>
+                                        </Select.List>
                                     </Select>
                                 </div>
                             </td>
                         </tr>
                     </table>
-                </Card>
+                </div>
             </div>
             <div className="flex flex-row">
-                <Card className="m-4">
+                <div className="m-4 w-fit">
                     <Button className="p-3 bg-green-600"
+                        variant='ghost'
                         onClick={handleAddRow}
                     >
-                        <p>Tambah Capaian Pembelajaran</p>
+                        <p className="text-white">Tambah Capaian Pembelajaran</p>
                     </Button>
-                </Card>
+                </div>
             </div>
 
             <div>

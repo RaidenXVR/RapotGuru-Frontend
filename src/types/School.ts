@@ -12,4 +12,6 @@ export type School = {
   website: string;
   email: string;
   telp: string;
+  kepalaSekolah: string;
+  nipKepalaSekolah: string;
 };

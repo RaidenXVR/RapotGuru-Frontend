@@ -38,7 +38,7 @@ export default function TeacherProfileEdit() {
                                 </p>
                             </td>
                             <td className="p-4">
-                                <Input className="rounded-lg p-2" crossOrigin={undefined} onChange={(e) => setNip(e.target.value)}
+                                <Input className="rounded-lg p-2"  onChange={(e) => setNip(e.target.value)}
                                     value={user?.nip} />
                             </td>
                         </tr>
@@ -49,7 +49,7 @@ export default function TeacherProfileEdit() {
                                 </p>
                             </td>
                             <td className="p-4">
-                                <Input className="rounded-lg p-2" crossOrigin={undefined} onChange={(e) => setName(e.target.value)}
+                                <Input className="rounded-lg p-2"  onChange={(e) => setName(e.target.value)}
                                     value={user?.name} />
 
                             </td>

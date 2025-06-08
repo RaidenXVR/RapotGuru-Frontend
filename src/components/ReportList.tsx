@@ -1,7 +1,7 @@
 import { PencilIcon, PencilSquareIcon, PrinterIcon } from "@heroicons/react/16/solid";
 import { IconButton } from "@material-tailwind/react";
 import { useEffect, useState } from "react";
-import { ReportData } from "../types/Report";
+import type { ReportData } from "../types/Report";
 import { useNavigate } from "react-router-dom";
 import { getReportsByUser } from "../api/reportApi";
 import { useUser } from "../context/userContext";
@@ -70,12 +70,12 @@ export default function ReportList() {
                         </th>
                         <th className="p-4 border-b border-slate-300 bg-slate-50">
                             <p className="block text-sm font-normal leading-none text-slate-500">
-                                Semester
+                                Tahun Ajaran
                             </p>
                         </th>
                         <th className="p-4 border-b border-slate-300 bg-slate-50">
                             <p className="block text-sm font-normal leading-none text-slate-500">
-                                Tahun                            </p>
+                                Semester                            </p>
                         </th>
                         <th className="p-4 border-b border-slate-300 bg-slate-50">
                             <p className="block text-sm font-normal leading-none text-slate-500">
@@ -110,16 +110,22 @@ export default function ReportList() {
                         <td className="p-4 border-b border-slate-200 py-5">
                             <p className="text-sm text-slate-500">{rep.deadline}</p>
                         </td>
-                        <td className="border-b border-slate-200">
-                            <IconButton className="bg-green-500 w-12 h-12 content-center"
+                        <td className="flex gap-3 border-b border-slate-200 mt-2 mb-2">
+                            <IconButton
+                                variant="ghost"
+                                className="bg-green-500 w-12 h-12 content-center"
                                 onClick={() => navigate(`/report-cards/edit/${rep.report_id}`)}
                             >
                                 <PencilSquareIcon className="h-8 w-8" color="white"
                                 />
                             </IconButton>
-                            <IconButton className="bg-blue-500 w-12 h-12">
+                            <IconButton
+                                onClick={() => navigate(`/report-cards/edit/${rep.report_id}/print`)}
+                                variant="ghost"
+                                className="bg-blue-500 w-12 h-12">
                                 <PrinterIcon className="w-8 h-8" color="white" />
                             </IconButton>
+
                         </td>
                     </tr>
                 ))

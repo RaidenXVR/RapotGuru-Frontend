@@ -1,9 +1,8 @@
 // src/api/schoolApi.ts
-import axios, { HttpStatusCode } from 'axios';
+import axios from 'axios';
 
-import { School } from '../types/School';
-import { useUser } from '../context/userContext';
-import { User } from '../types/User';
+import type { School } from '../types/School';
+
 
 export async function getSchoolList(): Promise<School[]> {
   try {
@@ -14,6 +13,17 @@ export async function getSchoolList(): Promise<School[]> {
     console.log(err)
     throw new Error('Failed to fetch school list');
 
+  }
+}
+
+export async function getSchoolDataByUserId(user_id: string): Promise<School> {
+  try {
+    const response = await axios.get(`/api/user/${user_id}/school-data`);
+    const data = await response.data;
+    return data;
+  } catch (err) {
+    console.log(err)
+    throw new Error('Failed to fetch school data for user');
   }
 }
 

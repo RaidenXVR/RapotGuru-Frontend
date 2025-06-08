@@ -1,5 +1,5 @@
 import { Button, Card, Input, Typography } from "@material-tailwind/react";
-import { School } from "../types/School";
+import type { School } from "../types/School";
 import { useEffect, useState } from "react";
 import { getSchoolList, setSchoolData, updateSchoolData } from "../api/schoolApi";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -26,6 +26,8 @@ export default function EditSchoolProfile() {
     const [web, setWeb] = useState<string>("");
     const [email, setEmail] = useState<string>("");
     const [telp, setTelp] = useState<string>("");
+    const [headmaster, setHeadmaster] = useState<string>("");
+    const [nipHeadmaster, setNipHeadmaster] = useState<string>("");
 
     const [npsnList, setNpsnList] = useState<String[]>([])
     const [nssList, setNssList] = useState<String[]>([])
@@ -39,24 +41,27 @@ export default function EditSchoolProfile() {
         && prov.trim() !== ""
         && postCode.trim() !== "";
 
-    let isEditMode = false;
+    const isEditMode = !!oldProfile;
 
-    if (oldProfile) {
-        isEditMode = true
-        setDisPen(oldProfile.dinasPendidikan);
-        setNpsn(oldProfile.npsn);
-        setNss(oldProfile.nss);
-        setAddress(oldProfile.alamat);
-        setSatPen(oldProfile.satuanPendidikan);
-        setVillage(oldProfile.desa);
-        setSubDis(oldProfile.kecamatan);
-        setRegen(oldProfile.kabupaten);
-        setProv(oldProfile.provinsi);
-        setPostCode(oldProfile.kodePos);
-        setWeb(oldProfile.website);
-        setEmail(oldProfile.email);
-        setTelp(oldProfile.telp);
-    }
+    useEffect(() => {
+        if (oldProfile) {
+            setDisPen(oldProfile.dinasPendidikan);
+            setNpsn(oldProfile.npsn);
+            setNss(oldProfile.nss);
+            setAddress(oldProfile.alamat);
+            setSatPen(oldProfile.satuanPendidikan);
+            setVillage(oldProfile.desa);
+            setSubDis(oldProfile.kecamatan);
+            setRegen(oldProfile.kabupaten);
+            setProv(oldProfile.provinsi);
+            setPostCode(oldProfile.kodePos);
+            setWeb(oldProfile.website);
+            setEmail(oldProfile.email);
+            setTelp(oldProfile.telp);
+            setHeadmaster(oldProfile.kepalaSekolah || "");
+            setNipHeadmaster(oldProfile.nipKepalaSekolah || "");
+        }
+    }, [oldProfile]);
 
     useEffect(() => {
         getSchoolList()
@@ -116,7 +121,7 @@ export default function EditSchoolProfile() {
                                     </td>
                                     <td className="p-4">
                                         <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
-                                            <Input className="rounded-lg p-2" crossOrigin={undefined} onChange={(e) => setDisPen(e.target.value)}
+                                            <Input className="rounded-lg p-2" onChange={(e) => setDisPen(e.target.value)}
                                                 value={disPen} />
                                         </p>
                                     </td>
@@ -129,7 +134,7 @@ export default function EditSchoolProfile() {
                                     </td>
                                     <td className="p-4">
                                         <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
-                                            <Input className=" p-2 rounded-lg" crossOrigin={undefined}
+                                            <Input className=" p-2 rounded-lg"
                                                 onChange={(e) => {
                                                     const cleaned = e.target.value.replace(/\D/g, "");
                                                     setNpsn(cleaned);
@@ -148,7 +153,7 @@ export default function EditSchoolProfile() {
                                     </td>
                                     <td className="p-4">
                                         <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
-                                            <Input className="rounded-lg p-2" crossOrigin={undefined}
+                                            <Input className="rounded-lg p-2"
                                                 onChange={(e) => {
                                                     const cleaned = e.target.value.replace(/\D/g, "");
                                                     setNss(cleaned);
@@ -162,12 +167,39 @@ export default function EditSchoolProfile() {
                                 <tr className="even:bg-blue-gray-50/50">
                                     <td className="p-4">
                                         <p className="block font-sans text-sm antialiased font-bold leading-normal text-blue-gray-900">
+                                            Kepala Sekolah
+                                        </p>
+                                    </td>
+                                    <td className="p-4">
+                                        <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
+                                            <Input className="rounded-lg p-2" onChange={(e) => setHeadmaster(e.target.value)}
+                                                value={headmaster} />
+                                        </p>
+                                    </td>
+                                </tr>
+                                <tr className="even:bg-blue-gray-50/50">
+                                    <td className="p-4">
+                                        <p className="block font-sans text-sm antialiased font-bold leading-normal text-blue-gray-900">
+                                            NIP Kepala Sekolah
+                                        </p>
+                                    </td>
+                                    <td className="p-4">
+                                        <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
+                                            <Input className="rounded-lg p-2" onChange={(e) => setNipHeadmaster(e.target.value)}
+                                                value={nipHeadmaster} />
+                                        </p>
+                                    </td>
+                                </tr>
+
+                                <tr className="even:bg-blue-gray-50/50">
+                                    <td className="p-4">
+                                        <p className="block font-sans text-sm antialiased font-bold leading-normal text-blue-gray-900">
                                             Alamat
                                         </p>
                                     </td>
                                     <td className="p-4">
                                         <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
-                                            <Input className="rounded-lg p-2" crossOrigin={undefined} onChange={(e) => setAddress(e.target.value)}
+                                            <Input className="rounded-lg p-2" onChange={(e) => setAddress(e.target.value)}
                                                 value={address} />
                                         </p>
                                     </td>
@@ -180,7 +212,7 @@ export default function EditSchoolProfile() {
                                     </td>
                                     <td className="p-4">
                                         <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
-                                            <Input className="rounded-lg p-2" crossOrigin={undefined} onChange={(e) => setSatPen(e.target.value)}
+                                            <Input className="rounded-lg p-2" onChange={(e) => setSatPen(e.target.value)}
                                                 value={satPen} />
                                         </p>
                                     </td>
@@ -194,7 +226,7 @@ export default function EditSchoolProfile() {
                                     </td>
                                     <td className="p-4">
                                         <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
-                                            <Input className="rounded-lg p-2" crossOrigin={undefined} onChange={(e) => setSubDis(e.target.value)}
+                                            <Input className="rounded-lg p-2" onChange={(e) => setSubDis(e.target.value)}
                                                 value={subDis} />
                                         </p>
                                     </td>
@@ -207,7 +239,7 @@ export default function EditSchoolProfile() {
                                     </td>
                                     <td className="p-4">
                                         <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
-                                            <Input className="rounded-lg p-2" crossOrigin={undefined} onChange={(e) => setSubDis(e.target.value)}
+                                            <Input className="rounded-lg p-2" onChange={(e) => setSubDis(e.target.value)}
                                                 value={subDis} />
                                         </p>
                                     </td>
@@ -220,7 +252,7 @@ export default function EditSchoolProfile() {
                                     </td>
                                     <td className="p-4">
                                         <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
-                                            <Input className="rounded-lg p-2" crossOrigin={undefined} onChange={(e) => setRegen(e.target.value)}
+                                            <Input className="rounded-lg p-2" onChange={(e) => setRegen(e.target.value)}
                                                 value={regen} />
                                         </p>
                                     </td>
@@ -232,7 +264,7 @@ export default function EditSchoolProfile() {
                                     </td>
                                     <td className="p-4">
                                         <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
-                                            <Input className="rounded-lg p-2" crossOrigin={undefined} onChange={(e) => setProv(e.target.value)}
+                                            <Input className="rounded-lg p-2" onChange={(e) => setProv(e.target.value)}
                                                 value={prov} />
                                         </p>
                                     </td>
@@ -244,7 +276,7 @@ export default function EditSchoolProfile() {
                                     </td>
                                     <td className="p-4">
                                         <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
-                                            <Input className="rounded-lg p-2" crossOrigin={undefined}
+                                            <Input className="rounded-lg p-2"
                                                 onChange={(e) => {
                                                     const cleaned = e.target.value.replace(/\D/g, "");
                                                     setPostCode(cleaned);
@@ -262,7 +294,7 @@ export default function EditSchoolProfile() {
                                     </td>
                                     <td className="p-4">
                                         <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
-                                            <Input className="rounded-lg p-2" crossOrigin={undefined} onChange={(e) => setWeb(e.target.value)}
+                                            <Input className="rounded-lg p-2" onChange={(e) => setWeb(e.target.value)}
                                                 value={web} />
                                         </p>
                                     </td>
@@ -274,7 +306,7 @@ export default function EditSchoolProfile() {
                                     </td>
                                     <td className="p-4">
                                         <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
-                                            <Input className="rounded-lg p-2" crossOrigin={undefined} onChange={(e) => setEmail(e.target.value)}
+                                            <Input className="rounded-lg p-2" onChange={(e) => setEmail(e.target.value)}
                                                 value={email} />
 
                                         </p>
@@ -287,7 +319,7 @@ export default function EditSchoolProfile() {
                                     </td>
                                     <td className="p-4">
                                         <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
-                                            <Input className="rounded-lg p-2" crossOrigin={undefined}
+                                            <Input className="rounded-lg p-2"
                                                 onChange={(e) => {
                                                     const cleaned = e.target.value.replace(/\D/g, "");
                                                     setTelp(cleaned);

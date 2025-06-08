@@ -1,8 +1,8 @@
 import { Button, Card, Typography } from "@material-tailwind/react";
 import { useEffect, useState } from "react";
-import { Student } from "../types/Student";
+import type { Student } from "../types/Student";
 import { useNavigate, useParams } from "react-router-dom";
-import { ReportData } from "../types/Report";
+import type { ReportData } from "../types/Report";
 import { getReportById, getStudentsByReport, getSubjectsByReport } from "../api/reportApi";
 import { useUser } from "../context/userContext";
 
@@ -115,38 +115,50 @@ export default function ReportCardEdit() {
                     </table>
                 </div>
             </div>
-            <div className="flex-1/2  m-4 mt-6 object-top-right">
-                <Card className="m-4">
-                    <Button className="p-3" onClick={() => navigate(`/report-cards/edit/${report_id}/subjects`, { state: { report_id: report_id } })}>
-                        <p>Edit Data Mata Pelajaran</p>
-                    </Button>
-                </Card>
-                <Card className="m-4">
-                    <Button className="p-3"
-                        onClick={() => navigate(`/report-cards/edit/${report_id}/extras`, { state: { report_id: report_id } })}
-                    >
-                        <p>Edit Data Ekstrakulikuler</p>
-                    </Button>
-                </Card>
-                <Card className="m-4">
-                    <Button className="p-3"
-                        onClick={() => navigate(`/report-cards/edit/${report_id}/students`, { state: { report_id: report_id } })}
+            <div className="flex-1/2  m-4 mt-6">
+                <div className="grid grid-cols-2 gap-4">
+                    <Card className="m-4 p-3 w-full">
+                        <Button className="p-3 w-full" onClick={() => navigate(`/report-cards/edit/${report_id}/subjects`, { state: { report_id: report_id } })}>
+                            <p>Edit Data Mata Pelajaran</p>
+                        </Button>
+                    </Card>
+                    <Card className="m-4 p-3 w-full">
+                        <Button className="p-3 w-full"
+                            onClick={() => navigate(`/report-cards/edit/${report_id}/extras`, { state: { report_id: report_id } })}
+                        >
+                            <p>Edit Data Ekstrakulikuler</p>
+                        </Button>
+                    </Card>
+                    <Card className="m-4 p-3 w-full">
+                        <Button className="p-3 w-full"
+                            onClick={() => navigate(`/report-cards/edit/${report_id}/students`, { state: { report_id: report_id } })}
 
-                    >
-                        <p>Edit Data Siswa</p>
-                    </Button>
-                </Card>
-                <Card className="m-4">
-                    <Button className="p-3">
-                        <p>Input Nilai Siswa</p>
-                    </Button>
-                </Card>
-                <Card className="m-4">
-                    <Button className="p-3">
-                        <p>Edit Absensi dan Catatan Siswa</p>
-                    </Button>
-                </Card>
-
+                        >
+                            <p>Edit Data Siswa</p>
+                        </Button>
+                    </Card>
+                    <Card className="m-4 p-3 w-full">
+                        <Button className="p-3 w-full"
+                            onClick={() => navigate(`/report-cards/edit/${report_id}/subject-marks`, { state: { report_id } })}
+                        >
+                            <p>Input Nilai Siswa</p>
+                        </Button>
+                    </Card>
+                    <Card className="m-4 p-3 w-full">
+                        <Button className="p-3 w-full"
+                            onClick={() => navigate(`/report-cards/edit/${report_id}/notes`, { state: { report_id } })}
+                        >
+                            <p>Edit Absensi dan Catatan Siswa</p>
+                        </Button>
+                    </Card>
+                    <Card className="m-4 p-3 w-full">
+                        <Button className="p-3 w-full"
+                            onClick={() => navigate(`/report-cards/edit`, { state: { prevData: report } })}
+                        >
+                            <p>Edit Data Rapot</p>
+                        </Button>
+                    </Card>
+                </div>
             </div>
         </div>
     );

@@ -3,29 +3,22 @@ import { forwardRef, useCallback, useEffect, useImperativeHandle, useState } fro
 import { v4 as uuidv4 } from 'uuid';
 
 import {
-    ClientSideRowModelApiModule,
-    ClientSideRowModelModule,
-    ColDef,
-    RowApiModule,
     ModuleRegistry,
-    NumberEditorModule,
-    TextEditorModule,
+    AllCommunityModule,
     ValidationModule,
-    CellStyleModule,
-    GridReadyEvent,
-    GridApi,
+    type ColDef,
+    type GridApi,
+    type ColGroupDef,
+    type ValueGetterParams
 } from "ag-grid-community";
-import { CPTableType, ExtraTableType, ExtraMarkTableType } from '../types/TableTypes';
-import { Student } from '../types/Student';
+import { CellSelectionModule, AllEnterpriseModule } from 'ag-grid-enterprise';
+import type { CPTableType, ExtraTableType, ExtraMarkTableType, StudentTableType, SubjectMarksTableTypes, NotesAttendanceTableType } from '../types/TableTypes';
 
 ModuleRegistry.registerModules([
-    NumberEditorModule,
-    TextEditorModule,
-    ClientSideRowModelApiModule,
-    ClientSideRowModelModule,
-    RowApiModule,
-    CellStyleModule,
-    ValidationModule,/* Development Only */
+    CellSelectionModule,
+    AllEnterpriseModule,
+    AllCommunityModule,
+    ValidationModule
 ]);
 
 interface ColOtherProps {
@@ -39,24 +32,28 @@ export interface ColHeaderProps {
     freeze?: boolean;
     dataType: 'text' | 'number' | 'boolean' | 'date' | 'dateString' | 'object';
     width?: number;
-    formula?: (params: any) => number;
+    formula?: (params: ValueGetterParams) => number;
     format?: (params: any) => string;
     wrapText?: boolean;
     centerHeader?: boolean;
     centerData?: boolean;
+}
 
+export interface ColHeaderGroupProps {
+    headerName: string
+    children?: ColHeaderProps[]
 
 }
 
 interface SheetProps {
-    columnHeaders: ColHeaderProps[];
+    columnHeaders: (ColHeaderGroupProps | ColHeaderProps)[];
     isRowDeletable?: boolean
     colOtherProps?: ColOtherProps;
-    initRowsData: CPTableType[] | ExtraTableType[] | ExtraMarkTableType[];
-    onRowDataChange?: (data: (CPTableType | ExtraTableType | ExtraMarkTableType)[], isDelete: boolean) => void;
+    initRowsData: CPTableType[] | ExtraTableType[] | ExtraMarkTableType[] | StudentTableType[];
+    onRowDataChange?: (data: (CPTableType | ExtraTableType | ExtraMarkTableType | StudentTableType | SubjectMarksTableTypes | NotesAttendanceTableType)[], isDelete: boolean) => void;
     addRow?: any;
     isNumbered?: boolean;
-    rowDeleteHandler?: (data: (CPTableType | ExtraTableType | ExtraMarkTableType)[]) => void;
+    rowDeleteHandler?: (data: (CPTableType | ExtraTableType | ExtraMarkTableType | StudentTableType)[]) => void;
 }
 
 export interface TableGridRef {
@@ -65,20 +62,32 @@ export interface TableGridRef {
 export const SpreadsheetTable = forwardRef<TableGridRef, SheetProps>(({ columnHeaders, isRowDeletable, initRowsData, onRowDataChange, isNumbered }, ref) => {
 
 
-    const generateColDefs = (headers: ColHeaderProps[]): ColDef[] => {
-        return headers.map((f) => ({
-            field: f.field,
-            editable: f.editable,
-            headerName: f.headerName,
-            pinned: f.freeze,
-            width: f.width,
-            valueGetter: f.formula,
-            valueFormatter: f.format,
-            wrapText: f.wrapText,
-            headerClass: f.centerHeader ? "ag-center-header" : undefined,
-            cellClass: f.centerData ? "ag-center-cells" : undefined,
-            cellDataType: f.dataType
-        }));
+    const generateColDefs = (headers: (ColHeaderProps | ColHeaderGroupProps)[]): (ColDef | ColGroupDef)[] => {
+        return headers.map((f) => {
+            if ('children' in f && f.children && f.children.length > 0) {
+                // It's a header group
+                return {
+                    headerName: f.headerName,
+                    children: generateColDefs(f.children)
+                };
+            } else {
+                // It's a leaf column
+                const col = f as ColHeaderProps;
+                return {
+                    field: col.field,
+                    editable: col.editable,
+                    headerName: col.headerName,
+                    pinned: col.freeze,
+                    width: col.width,
+                    valueGetter: col.formula,
+                    valueFormatter: col.format,
+                    wrapText: col.wrapText,
+                    headerClass: col.centerHeader ? "ag-center-header" : undefined,
+                    cellClass: col.centerData ? "ag-center-cells" : undefined,
+                    cellDataType: col.dataType,
+                };
+            }
+        });
     };
 
     const [colDefs, setColDefs] = useState<ColDef[]>(generateColDefs(columnHeaders));
@@ -129,7 +138,7 @@ export const SpreadsheetTable = forwardRef<TableGridRef, SheetProps>(({ columnHe
     }, []);
 
 
-    const rows: (CPTableType | ExtraTableType | ExtraMarkTableType)[] = []
+    const rows: (CPTableType | ExtraTableType | ExtraMarkTableType | StudentTableType)[] = []
     if (initRowsData) {
         rows.push(...initRowsData.map(row => ({ ...row, key: uuidv4() })));
     }
@@ -138,8 +147,23 @@ export const SpreadsheetTable = forwardRef<TableGridRef, SheetProps>(({ columnHe
     }
     useImperativeHandle(ref, () => ({
         addRow() {
+            // Helper to flatten headers and get only leaf columns
+            const getLeafHeaders = (headers: (ColHeaderProps | ColHeaderGroupProps)[]): ColHeaderProps[] => {
+                const result: ColHeaderProps[] = [];
+                headers.forEach(header => {
+                    if ('children' in header && Array.isArray(header.children)) {
+                        result.push(...getLeafHeaders(header.children));
+                    } else {
+                        result.push(header as ColHeaderProps);
+                    }
+                });
+                return result;
+            };
+
+            const leafHeaders = getLeafHeaders(columnHeaders);
+
             const newRow: any = {};
-            columnHeaders.forEach(header => {
+            leafHeaders.forEach(header => {
                 switch (header.dataType) {
                     case 'number':
                         newRow[header.field] = 0;
@@ -162,68 +186,12 @@ export const SpreadsheetTable = forwardRef<TableGridRef, SheetProps>(({ columnHe
             setRowData(prev => [...prev, newRow]);
         }
     }));
-
-    let [rowData, setRowData] = useState<(CPTableType | ExtraTableType | ExtraMarkTableType)[]>(rows);
+    let [rowData, setRowData] = useState<(CPTableType | ExtraTableType | ExtraMarkTableType | StudentTableType)[]>(rows);
 
     useEffect(() => {
         setRowData(rows);
 
     }, [initRowsData]);
-
-
-    const onGridReady = useCallback((params: GridReadyEvent) => {
-        setGridApi(params.api);
-    }, []);
-
-    const onPasteStart = useCallback((params: any) => {
-        const pastedData = params.data;
-        const numPastedRows = pastedData.length;
-
-        setRowData(prev => {
-            const existingRows = [...prev];
-            const numExistingRows = existingRows.length;
-
-            if (numPastedRows > numExistingRows) {
-                // Add new rows if pasted data has more rows than existing rows
-                const rowsToAdd = numPastedRows - numExistingRows;
-                for (let i = 0; i < rowsToAdd; i++) {
-                    const newRow: any = {};
-                    columnHeaders.forEach(header => {
-                        switch (header.dataType) {
-                            case 'number':
-                                newRow[header.field] = 0;
-                                break;
-                            case 'boolean':
-                                newRow[header.field] = false;
-                                break;
-                            case 'date':
-                                newRow[header.field] = new Date();
-                                break;
-                            case 'dateString':
-                                newRow[header.field] = new Date().toLocaleDateString();
-                                break;
-                            default:
-                                newRow[header.field] = '';
-                                break;
-                        }
-                    });
-                    newRow.key = uuidv4();
-                    existingRows.push(newRow);
-                }
-            }
-            // Update pasted values to existing rows
-            pastedData.forEach((pasteRow: any, index: number) => {
-                if (existingRows[index]) {
-                    columnHeaders.forEach(header => {
-                        (existingRows[index] as Record<string, any>)[header.field] = pasteRow[columnHeaders.indexOf(header)];
-                    });
-                }
-            });
-
-            return existingRows;
-        });
-    }, [columnHeaders, setRowData]);
-
 
     return (
         <div className="w-full h-fit">
@@ -231,17 +199,78 @@ export const SpreadsheetTable = forwardRef<TableGridRef, SheetProps>(({ columnHe
                 domLayout='autoHeight'
                 columnDefs={colDefs}
                 rowData={rowData}
-                // onPasteStart={onPasteStart}
-                // cellSelection
-                // onGridReady={onGridReady}
-                // rowSelection={'multiple'}
                 cellSelection={true}
+                allowContextMenuWithControlKey={true}
+                undoRedoCellEditing={true}
+                undoRedoCellEditingLimit={50}
+                clipboardDelimiter={'\t'}
+                processDataFromClipboard={(params) => {
+                    const clipboardData = params.data;
+                    const startCell = params.api.getFocusedCell();
+
+                    if (!startCell || !clipboardData) return clipboardData;
+
+                    const startRowIndex = startCell.rowIndex;
+                    const rowsNeeded = startRowIndex + clipboardData.length;
+
+                    const missingRows = rowsNeeded - rowData.length;
+
+                    if (missingRows > 0) {
+                        const newRows: any[] = [];
+
+                        for (let i = 0; i < missingRows; i++) {
+
+                            // Helper to flatten headers and get only leaf columns
+                            const getLeafHeaders = (headers: (ColHeaderProps | ColHeaderGroupProps)[]): ColHeaderProps[] => {
+                                const result: ColHeaderProps[] = [];
+                                headers.forEach(header => {
+                                    if ('children' in header && Array.isArray(header.children)) {
+                                        result.push(...getLeafHeaders(header.children));
+                                    } else {
+                                        result.push(header as ColHeaderProps);
+                                    }
+                                });
+                                return result;
+                            };
+
+                            const leafHeaders = getLeafHeaders(columnHeaders);
+
+                            const newRow: any = {};
+                            leafHeaders.forEach(header => {
+                                switch (header.dataType) {
+                                    case 'number': newRow[header.field] = 0; break;
+                                    case 'boolean': newRow[header.field] = false; break;
+                                    case 'date': newRow[header.field] = new Date(); break;
+                                    case 'dateString': newRow[header.field] = new Date().toLocaleDateString(); break;
+                                    default: newRow[header.field] = ''; break;
+                                }
+                            });
+                            newRow.key = uuidv4();
+                            newRows.push(newRow);
+                        }
+
+                        // 🔥 Use AG Grid API directly – NO React setState
+                        params.api.applyTransaction({ add: newRows });
+
+                        // Optionally sync with local state
+                        const updated = [...rowData, ...newRows];
+                        setRowData(updated);
+                        if (onRowDataChange) onRowDataChange(updated, false);
+                    }
+
+                    return clipboardData;
+                }}
+
+
+                onGridReady={(params) => {
+                    setGridApi(params.api);
+                }}
                 onCellValueChanged={(event) => {
-                    const updatedData = event.api.getRenderedNodes().map(node => {
-                        return node.data
-                    });
-                    setRowData(updatedData); // Keep internal state in sync
-                    if (onRowDataChange) onRowDataChange(updatedData, false);
+                    if (onRowDataChange) {
+                        const fullData: any[] = [];
+                        event.api.forEachNode(node => fullData.push(node.data));
+                        onRowDataChange(fullData, false);
+                    }
                 }}
             />
         </div>

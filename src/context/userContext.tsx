@@ -1,5 +1,5 @@
-import { createContext, useContext, useState, ReactNode } from "react";
-import { User } from "../types/User"
+import { createContext, useContext, useState, type ReactNode } from "react";
+import type { User } from "../types/User"
 
 type UserContextType = {
     user: User;

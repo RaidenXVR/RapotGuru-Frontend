@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from "react";
-import SpreadsheetTable, { ColHeaderProps } from "./SpreadsheetTable"
-import { Student } from "../types/Student";
-import { Input } from "@material-tailwind/react";
-import { getStudentsByReport } from "../api/reportApi";
-import { useLocation } from "react-router-dom";
-import { StudentTableType } from "../types/TableTypes";
+import SpreadsheetTable, { type ColHeaderProps, type TableGridRef } from "./SpreadsheetTable"
+import { type Student } from "../types/Student";
+import { Button, Input } from "@material-tailwind/react";
+import { getStudentsByReport, setStudentData } from "../api/reportApi";
+import { useLocation, useNavigate } from "react-router-dom";
+import type { CPTableType, ExtraMarkTableType, ExtraTableType, StudentTableType } from "../types/TableTypes";
 
 const studentColHeaders: ColHeaderProps[] = [
     { field: 'name', headerName: 'Nama Siswa', freeze: true, editable: true, width: 200, centerHeader: true, dataType: 'text' },
@@ -29,13 +29,22 @@ const studentColHeaders: ColHeaderProps[] = [
     { field: 'guardian_address', headerName: 'Alamat Wali', editable: true, width: 250, centerHeader: true, dataType: 'text' },
     { field: 'phone_num', headerName: 'Nomor HP', editable: true, width: 150, centerHeader: true, dataType: 'text' },
 ];
+
+
 export default function StudentsEdit() {
 
     const [initRows, setInitRows] = useState<StudentTableType[]>([]);
+    const [savedTableStudents, setSavedTableStudents] = useState<StudentTableType[]>(initRows)
     const isInitState = useRef(true)
-    const tableRef = useRef(null);
+    const tableRef = useRef<TableGridRef>(null);
     const location = useLocation();
-    const report_id = location.state.report_id
+    const report_id = location.state.report_id;
+    const navigate = useNavigate();
+
+
+    const handleAddRow = () => {
+        tableRef.current?.addRow();
+    };
 
     useEffect(() => {
         if (isInitState) {
@@ -44,12 +53,49 @@ export default function StudentsEdit() {
                     return st as StudentTableType
                 })
                 setInitRows(stu);
+                setSavedTableStudents(stu);
             })
         }
     }, [])
 
+    const handleTableChange = (updatedData: (CPTableType | ExtraTableType | ExtraMarkTableType | StudentTableType)[], isDelete: boolean) => {
+        setInitRows(updatedData as StudentTableType[])
+    }
+
+    const handleSave = () => {
+        setStudentData(initRows as Student[], report_id).then((val) => {
+            if (val) {
+                setSavedTableStudents(initRows);
+            }
+            else {
+                // trow error
+            }
+        }).catch((err) => {
+            console.log(err)
+        })
+
+    }
+
     return (
         <div>
+            <div className="w-screen m-3 flex justify-evenly">
+                <Button
+                    variant="ghost"
+                    className="p-3 bg-blue-600"
+                    onClick={() => navigate('..')} >
+                    <p className="text-white">
+                        Kembali
+                    </p>
+                </Button>
+
+                <Button
+                    variant="ghost"
+                    className="p-3 bg-green-600" onClick={handleSave}>
+                    <p className='text-white'>
+                        Simpan Perubahan
+                    </p>
+                </Button>
+            </div>
 
             <SpreadsheetTable
                 ref={tableRef}
@@ -57,7 +103,16 @@ export default function StudentsEdit() {
                 columnHeaders={studentColHeaders}
                 initRowsData={initRows}
                 isRowDeletable={true}
+                onRowDataChange={handleTableChange}
             />
-        </div>
+            <div className="w-screen m-3 flex items-center justify-center">
+                <Button
+                    variant="ghost"
+                    className="w-100 m-3 p-3 bg-green-600"
+                    onClick={handleAddRow}>
+                    <p className='text-white'>Tambah Baris</p>
+                </Button>
+            </div>
+        </div >
     )
 }

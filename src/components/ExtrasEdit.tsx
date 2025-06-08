@@ -1,14 +1,14 @@
-import { Button, Card } from "@material-tailwind/react";
+import { Button, Card, Radio, Typography } from "@material-tailwind/react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Extra } from "../types/Extra";
+import type { Extra } from "../types/Extra";
 import { useEffect, useRef, useState } from "react";
 import { getExtraMarksByExtra, getExtrasByReport, getStudentsByReport, setExtraMarksToDB, setExtrasToDB } from "../api/reportApi";
 import { v4 as uuidv4 } from "uuid";
-import SpreadsheetTable, { ColHeaderProps, TableGridRef } from "./SpreadsheetTable";
-import { CPTableType, ExtraTableType, ExtraMarkTableType } from "../types/TableTypes";
-import { Student } from "../types/Student";
+import SpreadsheetTable, { type ColHeaderProps, type TableGridRef } from "./SpreadsheetTable";
+import type { CPTableType, ExtraTableType, ExtraMarkTableType } from "../types/TableTypes";
+import type { Student } from "../types/Student";
 import "../index.css";
-import { ExtraMark } from "../types/MarkTypes";
+import type { ExtraMark } from "../types/MarkTypes";
 
 export default function ExtrasEdit() {
     const params = useParams()
@@ -153,14 +153,17 @@ export default function ExtrasEdit() {
                 // console.log("called set init student")
                 if (thisSavedMarks !== undefined && thisSavedMarks.length !== 0) {
                     const markIdx = thisSavedMarks.findIndex((val) => val.student_id === student.student_id);
-                    // console.log(thisSavedMarks, "thisSavedMarkss")
-                    return {
-                        ...student,
-                        extra_mark_id: thisSavedMarks[markIdx].extra_mark_id,
-                        mark: thisSavedMarks[markIdx].mark ? thisSavedMarks[markIdx].mark : 0,
-                        desc: thisSavedMarks[markIdx].desc,
-                        recom: thisSavedMarks[markIdx].recom,
-                        extra_id: thisSavedMarks[markIdx].extra_id
+                    if (markIdx !== -1) {
+                        return {
+                            ...student,
+                            extra_mark_id: thisSavedMarks[markIdx].extra_mark_id,
+                            mark: thisSavedMarks[markIdx].mark ? thisSavedMarks[markIdx].mark : 0,
+                            desc: thisSavedMarks[markIdx].desc,
+                            recom: thisSavedMarks[markIdx].recom,
+                            extra_id: thisSavedMarks[markIdx].extra_id
+                        }
+                    } else {
+                        return { ...student, desc: '', mark: 0, recom: '' }
                     }
                 }
                 else {
@@ -220,25 +223,29 @@ export default function ExtrasEdit() {
     return (
         <div className="flex flex-col mr-3">
             <div className="flex flex-row">
-                <Card className="m-4">
-                    <Button className="p-3 bg-green-600"
+                <Card className="m-4 w-fit p-3">
+                    <Button
+                        variant='ghost'
+                        className="p-3 bg-green-600"
                         onClick={handleSave}
                     >
-                        <p>Simpan Perubahan</p>
+                        <p className="text-white">Simpan Perubahan</p>
                     </Button>
                 </Card>
 
-                <Card className="m-4">
-                    <Button className="p-3 bg-blue-600"
+                <Card className="m-4 w-fit p-3">
+                    <Button
+                        variant='ghost'
+                        className="p-3 bg-blue-600"
                         onClick={() => navigate(`..`)}
                     >
-                        <p>Kembali</p>
+                        <p className="text-white">Kembali</p>
                     </Button>
                 </Card>
             </div>
-            <div className="mr-4 ml-4">
-                <Card className="m-4">
-                    <Button className="p-3 bg-green-600"
+            <div className="flex justify-center">
+                <Card className="w-screen/2 flex justify-center p-3">
+                    <Button className="p-3 w-full bg-green-600"
                         onClick={handleAddRow}
                     >
                         <p>Tambah Ekstrakulikuler</p>
@@ -259,26 +266,28 @@ export default function ExtrasEdit() {
                     onRowDataChange={handleTableChange}
                 />
             </div>
-            <div className="relative grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 m-4 w-full h-fit overflow-auto text-gray-700 bg-white shadow-md bg-clip-border rounded-xl p-4">
-                {
-                    tableExtras.map((ex, idx) => (
-                        ex.name !== "" ? (
-                            <div key={`${idx}-${ex.extra_id}`}>
-                                <input
-                                    key={`${idx}-${ex.extra_id}`}
-                                    radioGroup="extras"
-                                    checked={selectedExtra === ex.name}
-                                    className="w-8 "
-                                    type="radio"
-                                    title={ex.name}
-                                    id={ex.name}
-                                    onChange={() => handleRadioChange(ex.name)}
-
-                                /><label>{ex.name}</label>
-                            </div>
-                        ) : null
-                    ))
-                }
+            <div className=" m-4 w-full h-fit text-gray-700 bg-white shadow-md bg-clip-border rounded-xl p-4">
+                <Radio color="success" className="grid grid-cols-4 gap-2">
+                    {
+                        tableExtras.map((ex, idx) => (
+                            ex.name !== "" ? (
+                                <div key={`${idx}-${ex.extra_id}`} className="flex flex-row p-3 gap-4">
+                                    <Radio.Item
+                                        key={`${idx}-${ex.extra_id}`}
+                                        title={ex.name}
+                                        id={ex.name}
+                                        onChange={() => handleRadioChange(ex.name)}
+                                    >
+                                        <Radio.Indicator />
+                                    </Radio.Item>
+                                    <Typography>
+                                        {ex.name}
+                                    </Typography>
+                                </div>
+                            ) : null
+                        ))
+                    }
+                </Radio>
             </div>
             <div
                 className="relative flex flex-col m-4 w-full h-fit overflow-scroll text-gray-700 bg-white shadow-md bg-clip-border rounded-xl">

@@ -1,5 +1,5 @@
 export type Student = {
-    student_id: string;
+    student_id?: string;
     name: string;
     nis: string;
     nisn: string;

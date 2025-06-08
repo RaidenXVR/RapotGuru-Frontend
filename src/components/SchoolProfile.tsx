@@ -1,6 +1,6 @@
 import { Typography } from "@material-tailwind/react"
 import { useEffect, useState } from "react";
-import { School } from "../types/School";
+import type { School } from "../types/School";
 import { getSchoolList } from "../api/schoolApi";
 import { useUser } from "../context/userContext";
 
@@ -28,11 +28,9 @@ export default function SchoolProfile() {
 
 
   return (
-    <div className="flex-1/2 m-4 object-top-left">
+    <div className="flex-1/2 m-4 object-top-left h-fit">
       <Typography className="justify-center align-middle">
-        <h1>
-          <strong>Profil Sekolah</strong>
-        </h1>
+        <strong>Profil Sekolah</strong>
       </Typography>
       <div
         className="relative flex flex-col w-full h-full overflow-scroll text-gray-700 bg-white shadow-md bg-clip-border rounded-xl">
