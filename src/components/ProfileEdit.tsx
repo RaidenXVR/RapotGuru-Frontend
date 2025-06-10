@@ -53,7 +53,7 @@ export default function ProfileEdit() {
         setLoading(true);
 
         Promise.all([
-            getUserData('123456789'),
+            getUserData(user!.nip),
             getSchoolList()
         ])
             .then(([userData, schoolData]) => {
@@ -78,11 +78,24 @@ export default function ProfileEdit() {
 
             <TeacherProfile />
             <div className="w-full top-0 right-0 flex-col-reverse">
-                <Button
-                    variant="ghost"
-                    onClick={() => navigate("/profile/edit-teacher")} className="flex top-0 right-0 ml-3 object-right p-3 bg-green-500">
-                    <h1>Edit Profil Guru</h1>
-                </Button>
+                <div className="flex justify-start items-center p-3">
+                    <Button
+                        variant="ghost"
+                        onClick={() => navigate("/profile/edit-teacher")} className="flex top-0 right-0 ml-3 object-right p-3 bg-green-500">
+                        <h1>Edit Profil Guru</h1>
+                    </Button>
+                    <Button
+                        variant="ghost"
+                        onClick={() => {
+                            localStorage.removeItem("user");
+                            navigate("/login");
+                            setUser(null);
+                        }}
+                        className="flex top-0 right-0 ml-3 object-right p-3 bg-red-500"
+                    >
+                        Logout
+                    </Button>
+                </div>
             </div>
             <SchoolProfile />
             <div className="m-3 flex w-full">

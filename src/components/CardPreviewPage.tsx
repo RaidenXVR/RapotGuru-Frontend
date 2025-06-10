@@ -161,7 +161,7 @@ export default function CardPreviewPage() {
             setReportData(data);
         })
 
-        getSchoolDataByUserId("123456789").then((data) => {
+        getSchoolDataByUserId(user!.nip).then((data) => {
             setSchoolProfile(data);
         })
         getSubjectsByReport(report_id!).then((data) => {

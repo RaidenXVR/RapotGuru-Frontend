@@ -8,7 +8,7 @@ export default function ReportCards() {
 
     return (
         <div>
-            <div className="w-full justify-end flex-1">
+            <div className="w-full justify-end flex-1 m-3">
                 <Button className="flex ml-3 object-right p-3 bg-green-500"
                     onClick={() => navigate('/report-cards/new')}
                 >

@@ -3,6 +3,7 @@ import { useUser } from "../context/userContext";
 
 export default function TeacherProfile() {
     const { user } = useUser();
+    console.log("TeacherProfile user:", user);
     return (
         <div className="flex-1/2  m-4 object-top-right">
             <Typography className="justify-center align-middle">

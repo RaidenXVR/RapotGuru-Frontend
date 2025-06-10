@@ -9,9 +9,6 @@ import type { Student } from '../types/Student';
 import type { NotesAttendance } from '../types/NotesAttendance';
 import type { ReportData } from '../types/Report';
 
-let name = "FTRN";
-let nip = "123456789";
-let npsn = "12345678";
 
 type EmptyParamType = {
 }
@@ -107,17 +104,53 @@ type GetNotesAttendanceParamType = {
 }
 
 export const handlers = [
+
+  http.post<EmptyParamType, { nip: string, password: string }>('/api/users/login', async ({ request }) => {
+    const { nip, password } = await request.json();
+
+    const user = users.find(user => user!.nip === nip && user!.password === password);
+    if (!user) {
+      return HttpResponse.json({ error: 'Invalid credentials' }, { status: 401 });
+    }
+
+    return HttpResponse.json({
+      user
+    }, {
+      status: 200
+    })
+  }),
+  http.post<EmptyParamType, { nip: string, name: string, password: string }>('/api/users/register', async ({ request }) => {
+    const { nip, name, password } = await request.json();
+
+    const existingUser = users.find(user => user!.nip === nip);
+    if (existingUser) {
+      return HttpResponse.json({ error: 'User already exists' }, { status: 400 });
+    }
+
+    const newUser = {
+      nip,
+      name,
+      npsn: undefined,
+      username: nip,
+      password
+    };
+    users.push(newUser);
+
+    return HttpResponse.json({ status: 200 });
+  }),
+
   http.get('/api/school-list', ({ request }) => {
     return HttpResponse.json(schools);
   }),
   http.get('/api/users/:id', ({ params }) => {
     const { id } = params;
+    const user = users.find(user => user!.nip === id);
+    if (!user) {
+      return HttpResponse.json({ error: 'User not found' }, { status: 404 });
+    }
+    return HttpResponse.json(user, { status: 200 });
 
-    return HttpResponse.json({
-      nip: id,
-      name: name,
-      npsn: npsn
-    })
+
   }),
   http.get('/api/user/:id/school-data', ({ params }) => {
     const { id } = params;
@@ -132,25 +165,42 @@ export const handlers = [
   }),
   http.post<SetUserSchoolParamType, SetUserSchoolBodyType>('/api/users/:id/change-school', async ({ params, request }) => {
     const { id } = params;
-
     const data = await request.json();
-    npsn = data.npsn;
-
+    const user = users.find(user => user!.nip === id);
+    if (!user) {
+      return HttpResponse.json({ error: 'User not found' }, { status: 404 });
+    }
+    const school = schools.find(school => school.npsn === data.npsn);
+    if (!school) {
+      return HttpResponse.json({ error: 'School not found' }, { status: 404 });
+    }
+    users.forEach(item => {
+      if (item!.nip === id) {
+        item!.npsn = data.npsn; // Directly adding a new property
+      }
+    })
     return HttpResponse.json({
-      nip: id,
-      name: name,
-      npsn: npsn
-    }, { status: 200 })
+      status: 200
+    })
   }),
   http.post<SetUserProfileParamType, SetUserProfileBodyType>('/api/users/:id/update-user', async ({ params, request }) => {
     const { id } = params;
     const data = await request.json();
 
-    nip = data.nip;
-    name = data.name;
-
+    const user = users.find(user => user!.nip === id);
+    if (!user) {
+      return HttpResponse.json({ error: 'User not found' }, { status: 404 });
+    }
+    users.forEach(item => {
+      if (item!.nip === id) {
+        item!.nip = data.nip; // Directly adding a new property
+        item!.name = data.name;
+      }
+    })
     return HttpResponse.json({
-    }, { status: 200 })
+      status: 200
+    })
+
   }),
   http.post<SetSchoolProfileParamType, SetSchoolProfileBodyType>('/api/schools/:id/update-school', async ({ params, request }) => {
     const { id } = params;

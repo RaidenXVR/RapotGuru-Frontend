@@ -76,6 +76,30 @@ export default function SchoolProfile() {
               <tr className="even:bg-blue-gray-50/50">
                 <td className="p-4">
                   <p className="block font-sans text-sm antialiased font-bold leading-normal text-blue-gray-900">
+                    NIP Kepala Sekolah
+                  </p>
+                </td>
+                <td className="p-4">
+                  <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
+                    {school ? school.nipKepalaSekolah : "Belum Pilih Sekolah"}
+                  </p>
+                </td>
+              </tr>
+              <tr className="even:bg-blue-gray-50/50">
+                <td className="p-4">
+                  <p className="block font-sans text-sm antialiased font-bold leading-normal text-blue-gray-900">
+                    Kepala Sekolah
+                  </p>
+                </td>
+                <td className="p-4">
+                  <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
+                    {school ? school.kepalaSekolah : "Belum Pilih Sekolah"}
+                  </p>
+                </td>
+              </tr>
+              <tr className="even:bg-blue-gray-50/50">
+                <td className="p-4">
+                  <p className="block font-sans text-sm antialiased font-bold leading-normal text-blue-gray-900">
                     Alamat
                   </p>
                 </td>
