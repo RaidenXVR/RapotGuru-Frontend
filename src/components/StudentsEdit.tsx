@@ -1,10 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import SpreadsheetTable, { type ColHeaderProps, type TableGridRef } from "./SpreadsheetTable"
 import { type Student } from "../types/Student";
-import { Button, Input } from "@material-tailwind/react";
+import { Alert, Button, Input } from "@material-tailwind/react";
 import { getStudentsByReport, setStudentData } from "../api/reportApi";
 import { useLocation, useNavigate } from "react-router-dom";
 import type { CPTableType, ExtraMarkTableType, ExtraTableType, StudentTableType } from "../types/TableTypes";
+import { CheckCircleIcon, ExclamationCircleIcon } from "@heroicons/react/16/solid";
+import ConfirmDialog from "./ConfirmDialog";
 
 const studentColHeaders: ColHeaderProps[] = [
     { field: 'name', headerName: 'Nama Siswa', freeze: true, editable: true, width: 200, centerHeader: true, dataType: 'text' },
@@ -34,7 +36,11 @@ const studentColHeaders: ColHeaderProps[] = [
 export default function StudentsEdit() {
 
     const [initRows, setInitRows] = useState<StudentTableType[]>([]);
-    const [savedTableStudents, setSavedTableStudents] = useState<StudentTableType[]>(initRows)
+    const [savedTableStudents, setSavedTableStudents] = useState<StudentTableType[]>(initRows);
+    const [openDialog, setOpenDialog] = useState(false);
+    const [openSaveAlert, setOpenSaveAlert] = useState(false);
+    const [alertMessage, setAlertMessage] = useState<string>('');
+    const [alertType, setAlertType] = useState<'success' | 'error'>('success');
     const isInitState = useRef(true)
     const tableRef = useRef<TableGridRef>(null);
     const location = useLocation();
@@ -66,18 +72,56 @@ export default function StudentsEdit() {
         setStudentData(initRows as Student[], report_id).then((val) => {
             if (val) {
                 setSavedTableStudents(initRows);
+                setAlertMessage('Data siswa berhasil disimpan!');
+                setAlertType('success');
+                setOpenSaveAlert(true);
+                setTimeout(() => {
+                    setOpenSaveAlert(false);
+                }, 3000);
             }
             else {
-                // trow error
+                setAlertMessage('Gagal menyimpan data siswa!');
+                setAlertType('error');
+                setOpenSaveAlert(true);
+                setTimeout(() => {
+                    setOpenSaveAlert(false);
+                }, 3000);
             }
         }).catch((err) => {
-            console.log(err)
+            console.log(err);
+            setAlertMessage('Terjadi kesalahan saat menyimpan data siswa!');
+            setAlertType('error');
+            setOpenSaveAlert(true);
+            setTimeout(() => {
+                setOpenSaveAlert(false);
+            }, 3000);
         })
 
     }
 
     return (
         <div>
+            {openDialog && (<ConfirmDialog
+                open={openDialog}
+                header="Anda Belum Menyimpan Perubahan!"
+                message="Apakah Anda yakin ingin meninggalkan halaman ini tanpa menyimpan perubahan?"
+                confirmText="Ya, Kembali"
+                confirmColor="red"
+                dismissText="Tidak, Tetap di Halaman Ini"
+                dismissColor="blue"
+                onDismiss={() => setOpenDialog(false)}
+                onConfirm={() => navigate('..')} />
+            )}
+            {openSaveAlert && (
+                <Alert color={alertType} className="m-3">
+                    <Alert.Icon>
+                        {alertType === 'success' ? (<CheckCircleIcon />) : (<ExclamationCircleIcon className="h-6 w-6" />)}
+                    </Alert.Icon>
+                    <Alert.Content>
+                        {alertMessage}
+                    </Alert.Content>
+                </Alert>
+            )}
             <div className="w-screen m-3 flex justify-evenly">
                 <Button
                     variant="ghost"

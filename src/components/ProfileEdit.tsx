@@ -180,7 +180,7 @@ export default function ProfileEdit() {
                                         <p className="block font-semibold text-sm text-slate-800">{school.npsn}</p>
                                     </td>
                                     <td className="p-4 border-b border-slate-200 py-5">
-                                        <p className="text-sm text-slate-500">{school.satuanPendidikan}</p>
+                                        <p className="text-sm text-slate-500">{school.satuan_pendidikan}</p>
                                     </td>
                                     <td className="p-4 border-b border-slate-200 py-5">
                                         <p className="text-sm text-slate-500">{school.kecamatan}</p>
@@ -189,7 +189,7 @@ export default function ProfileEdit() {
                                         <p className="text-sm text-slate-500">{school.provinsi}</p>
                                     </td>
                                     <td className="p-4 border-b border-slate-200 py-5">
-                                        <p className="text-sm text-slate-500">{school.dinasPendidikan}</p>
+                                        <p className="text-sm text-slate-500">{school.dinas_pendidikan}</p>
                                     </td>
 
                                     <td className="p-4 border-b border-slate-200 py-5">

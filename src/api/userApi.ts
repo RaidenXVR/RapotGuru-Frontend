@@ -1,10 +1,12 @@
 import axios from "axios";
 import type { User } from "../types/User";
 
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
+
 export async function getUserData(id: String) {
 
     try {
-        const response = await axios.get(`/api/users/${id}`)
+        const response = await axios.get(`${BASE_URL}/api/users/${id}`)
         const data = await response.data;
         return data;
     } catch (err) {
@@ -17,7 +19,7 @@ export async function getUserData(id: String) {
 export async function setUserData(nip: string, name: string) {
 
     try {
-        const response = await axios.post(`/api/users/${nip}/update-user`, { nip: nip, name: name });
+        const response = await axios.post(`${BASE_URL}/api/users/${nip}/update-user`, { nip: nip, name: name });
         const status = await response.status;
         if (status == 200) return true
         else return false
@@ -30,7 +32,7 @@ export async function setUserData(nip: string, name: string) {
 
 export async function loginUser(nip: string, password: string): Promise<{ user: User, error: string | null }> {
     try {
-        const response = await axios.post(`/api/users/login`, { nip: nip, password: password });
+        const response = await axios.post(`${BASE_URL}/api/users/login`, { nip: nip, password: password });
         const data = await response.data;
         return data;
     } catch (err) {
@@ -39,9 +41,9 @@ export async function loginUser(nip: string, password: string): Promise<{ user: 
     }
 }
 
-export async function registerUser(nip: string, name: string, password: string): Promise<{error: string | null }> {
+export async function registerUser(nip: string, name: string, password: string): Promise<{ error: string | null }> {
     try {
-        const response = await axios.post(`/api/users/register`, { nip: nip, name: name, password: password });
+        const response = await axios.post(`${BASE_URL}/api/users/register`, { nip: nip, name: name, password: password });
         const data = await response.data;
         return data;
     } catch (err) {

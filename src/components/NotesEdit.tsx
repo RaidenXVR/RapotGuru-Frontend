@@ -93,18 +93,22 @@ export default function NotesEdit() {
             setStudents(data);
             getNotesAttendanceByReport(report_id).then((notesData) => {
                 setNotesAttendance(notesData);
-                const rows: NotesAttendanceTableType[] = notesData.map(note => {
-                    const student = data.find(s => s.student_id === note.student_id);
+                console.log("Notes Attendance Data:", notesData);
+                console.log("Students Data:", data);
+
+                //fix this, this assume that notesData is not empty
+                const rows: NotesAttendanceTableType[] = data.map((student) => {
+                    const note = notesData.find(note => note.student_id === student.student_id);
+
                     return {
-                        student_id: note.student_id,
-                        notes_id: note.id,
-                        name: student ? student.name : 'Unknown',
-                        sick: note.sick,
-                        leave: note.leave,
-                        alpha: note.alpha,
-                        notes: note.notes || '',
-                    };
-                })
+                        student_id: student.student_id!,
+                        name: student.name,
+                        sick: note ? note.sick : 0,
+                        leave: note ? note.leave : 0,
+                        alpha: note ? note.alpha : 0,
+                        notes: note ? note.notes : '',
+                    }
+                });
                 setInitRows(rows);
             })
         })

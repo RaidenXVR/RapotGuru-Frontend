@@ -45,7 +45,7 @@ export default function SchoolProfile() {
                 </td>
                 <td className="p-4">
                   <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
-                    {school ? school.dinasPendidikan : "Belum Pilih Sekolah"}
+                    {school ? school.dinas_pendidikan : "Belum Pilih Sekolah"}
                   </p>
                 </td>
               </tr>
@@ -81,7 +81,7 @@ export default function SchoolProfile() {
                 </td>
                 <td className="p-4">
                   <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
-                    {school ? school.nipKepalaSekolah : "Belum Pilih Sekolah"}
+                    {school ? school.nip_kepala_sekolah : "Belum Pilih Sekolah"}
                   </p>
                 </td>
               </tr>
@@ -93,7 +93,7 @@ export default function SchoolProfile() {
                 </td>
                 <td className="p-4">
                   <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
-                    {school ? school.kepalaSekolah : "Belum Pilih Sekolah"}
+                    {school ? school.kepala_sekolah : "Belum Pilih Sekolah"}
                   </p>
                 </td>
               </tr>
@@ -117,7 +117,7 @@ export default function SchoolProfile() {
                 </td>
                 <td className="p-4">
                   <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
-                    {school ? school.satuanPendidikan : "Belum Pilih Sekolah"}
+                    {school ? school.satuan_pendidikan : "Belum Pilih Sekolah"}
                   </p>
                 </td>
               </tr>
@@ -163,7 +163,7 @@ export default function SchoolProfile() {
                 </td>
                 <td className="p-4">
                   <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
-                    {school ? school.kodePos : "Belum Pilih Sekolah"}
+                    {school ? school.kode_pos : "Belum Pilih Sekolah"}
                   </p>
                 </td>
               </tr>

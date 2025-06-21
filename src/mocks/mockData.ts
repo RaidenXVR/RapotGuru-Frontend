@@ -16,8 +16,8 @@ export let users: User[] = [
 
 export let schools: School[] = [
     {
-        dinasPendidikan: "Dinas Pendidikan Kota A",
-        satuanPendidikan: "SMA Negeri 1 Kota A",
+        dinas_pendidikan: "Dinas Pendidikan Kota A",
+        satuan_pendidikan: "SMA Negeri 1 Kota A",
         npsn: "12345678",
         nss: "9876543210",
         alamat: "Jl. Pendidikan No.1",
@@ -25,16 +25,16 @@ export let schools: School[] = [
         kecamatan: "Kecamatan Belajar",
         kabupaten: "Kabupaten Semangat",
         provinsi: "Provinsi Ilmu",
-        kodePos: "12345",
+        kode_pos: "12345",
         website: "http://sman1kotaa.sch.id",
         email: "info@sman1kotaa.sch.id",
         telp: "021-1234567",
-        kepalaSekolah: "Asep Hidayat",
-        nipKepalaSekolah: "123456789"
+        kepala_sekolah: "Asep Hidayat",
+        nip_kepala_sekolah: "123456789"
     },
     {
-        dinasPendidikan: "Dinas Pendidikan Kabupaten B",
-        satuanPendidikan: "SMP Negeri 2 Kabupaten B",
+        dinas_pendidikan: "Dinas Pendidikan Kabupaten B",
+        satuan_pendidikan: "SMP Negeri 2 Kabupaten B",
         npsn: "87654321",
         nss: "0123456789",
         alamat: "Jl. Pelajar No.2",
@@ -42,12 +42,12 @@ export let schools: School[] = [
         kecamatan: "Kecamatan Kreatif",
         kabupaten: "Kabupaten Inspirasi",
         provinsi: "Provinsi Pengetahuan",
-        kodePos: "67890",
+        kode_pos: "67890",
         website: "http://smpn2kabupatenb.sch.id",
         email: "contact@smpn2kabupatenb.sch.id",
         telp: "022-7654321",
-        kepalaSekolah: "Hendri Prabowo",
-        nipKepalaSekolah: "987654321"
+        kepala_sekolah: "Hendri Prabowo",
+        nip_kepala_sekolah: "987654321"
     }
 ]
 

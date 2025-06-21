@@ -208,14 +208,14 @@ export const handlers = [
 
     schools.forEach(item => {
       if (item.npsn === id) {
-        item.dinasPendidikan = data.dinasPendidikan; // Directly adding a new property
-        item.satuanPendidikan = data.satuanPendidikan;
+        item.dinas_pendidikan = data.dinasPendidikan; // Directly adding a new property
+        item.satuan_pendidikan = data.satuanPendidikan;
         item.alamat = data.alamat;
         item.desa = data.desa;
         item.kecamatan = data.kecamatan;
         item.kabupaten = data.kabupaten;
         item.provinsi = data.provinsi;
-        item.kodePos = data.kodePos;
+        item.kode_pos = data.kodePos;
         item.website = data.website;
         item.email = data.email;
         item.telp = data.telp;

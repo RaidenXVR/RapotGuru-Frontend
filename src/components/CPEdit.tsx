@@ -1,4 +1,4 @@
-import { Button, Card, Input, Select, Dialog, SelectOption } from "@material-tailwind/react";
+import { Button, Card, Input, Select, Dialog, SelectOption, Alert } from "@material-tailwind/react";
 import { data, useLocation, useNavigate } from "react-router-dom";
 import type { Subject } from "../types/Subject";
 import { useEffect, useRef, useState } from "react";
@@ -6,6 +6,9 @@ import SpreadsheetTable, { type TableGridRef } from "./SpreadsheetTable";
 import type { CP } from "../types/CP";
 import type { CPTableType, ExtraMarkTableType, ExtraTableType, StudentTableType } from "../types/TableTypes";
 import { getCPBySubjectID, setCPBySubjectID, setSubjectByReport } from "../api/reportApi";
+import ConfirmDialog from "./ConfirmDialog";
+import { CheckCircleIcon } from "@heroicons/react/24/solid";
+import { ExclamationCircleIcon } from "@heroicons/react/24/solid";
 
 
 // (params: any) => {
@@ -48,6 +51,10 @@ export default function CPEdit() {
     const [cps, setCPs] = useState<CP[]>([])
     const [initCPs, setInitCPs] = useState<CPTableType[]>([])
     const [open, setOpen] = useState(false);
+    const [openDialog, setOpenDialog] = useState(false);
+    const [openSaveAlert, setOpenSaveAlert] = useState(false);
+    const [alertMessage, setAlertMessage] = useState<string>('');
+    const [alertType, setAlertType] = useState<'success' | 'error'>('success');
 
     const handleOpen = () => setOpen(!open);
 
@@ -87,11 +94,31 @@ export default function CPEdit() {
                 setCPBySubjectID(tobeUpdateCP, currentSubject.subject_id).then((val) => {
                     if (val) {
                         setCpSaved(cpChanged)
+                        setOpenSaveAlert(true);
+                        setAlertMessage("Perubahan berhasil disimpan!");
+                        setAlertType('success');
+                        setTimeout(() => {
+                            setOpenSaveAlert(false);
+
+                        }, 2000);
                     }
                     else {
-                        //throw error
+                        setOpenSaveAlert(true);
+                        setAlertMessage("Gagal menyimpan perubahan!");
+                        setAlertType('error');
+                        setTimeout(() => {
+                            setOpenSaveAlert(false);
+                        }, 2000);
                     }
-                })
+                }).catch((err) => {
+                    console.error("Error saving CP:", err);
+                    setOpenSaveAlert(true);
+                    setAlertMessage("Gagal menyimpan perubahan!");
+                    setAlertType('error');
+                    setTimeout(() => {
+                        setOpenSaveAlert(false);
+                    }, 2000);
+                });
 
             });
         }
@@ -99,12 +126,31 @@ export default function CPEdit() {
             setCPBySubjectID(tobeUpdateCP, currentSubject.subject_id).then((val) => {
                 console.log(tobeUpdateCP, "tobe update")
                 if (val) {
-                    setCpSaved(cpChanged)
+                    setCpSaved(cpChanged);
+                    setOpenSaveAlert(true);
+                    setAlertMessage("Perubahan berhasil disimpan!");
+                    setAlertType('success');
+                    setTimeout(() => {
+                        setOpenSaveAlert(false);
+                    }, 2000);
                 }
                 else {
-                    //throw error
+                    setOpenSaveAlert(true);
+                    setAlertMessage("Gagal menyimpan perubahan!");
+                    setAlertType('error');
+                    setTimeout(() => {
+                        setOpenSaveAlert(false);
+                    }, 2000);
                 }
-            })
+            }).catch((err) => {
+                console.error("Error saving CP:", err);
+                setOpenSaveAlert(true);
+                setAlertMessage("Gagal menyimpan perubahan!");
+                setAlertType('error');
+                setTimeout(() => {
+                    setOpenSaveAlert(false);
+                }, 2000);
+            });
         };
         if (currentSubject.subject_name !== subjectName || currentSubject.min_mark !== subjectMinMark || currentSubject.subject_category !== subjectCategory) {
             const sub: Subject = { subject_id: currentSubject.subject_id, subject_name: subjectName, min_mark: subjectMinMark, subject_category: subjectCategory, report_id: report_id }
@@ -166,7 +212,16 @@ export default function CPEdit() {
                     </Dialog.Content>
                 </Dialog.Overlay>
             </Dialog>
-
+            {openSaveAlert && (
+                <Alert color={alertType} className="m-3">
+                    <Alert.Icon>
+                        {alertType === 'success' ? (<CheckCircleIcon />) : (<ExclamationCircleIcon className="h-6 w-6" />)}
+                    </Alert.Icon>
+                    <Alert.Content>
+                        {alertMessage}
+                    </Alert.Content>
+                </Alert>
+            )}
             <div className="flex flex-row">
                 <div className="m-4 w-fit" onClick={saveTableChanges}>
                     <Button

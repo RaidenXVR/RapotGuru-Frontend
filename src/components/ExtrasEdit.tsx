@@ -1,4 +1,4 @@
-import { Button, Card, Radio, Typography } from "@material-tailwind/react";
+import { Alert, Button, Card, Radio, Typography } from "@material-tailwind/react";
 import { useNavigate, useParams } from "react-router-dom";
 import type { Extra } from "../types/Extra";
 import { useEffect, useRef, useState } from "react";
@@ -9,6 +9,9 @@ import type { CPTableType, ExtraTableType, ExtraMarkTableType } from "../types/T
 import type { Student } from "../types/Student";
 import "../index.css";
 import type { ExtraMark } from "../types/MarkTypes";
+import { CheckCircleIcon } from "@heroicons/react/24/solid";
+import { ExclamationCircleIcon } from "@heroicons/react/24/solid";
+import ConfirmDialog from "./ConfirmDialog";
 
 export default function ExtrasEdit() {
     const params = useParams()
@@ -25,10 +28,15 @@ export default function ExtrasEdit() {
     const [savedMarks, setSavedMarks] = useState<{ [extra_name: string]: ExtraMarkTableType[] }>({});
     const tableRef = useRef<TableGridRef>(null);
     const isInitialMount = useRef(true); // Track initial mount
+    const [openDialog, setOpenDialog] = useState(false);
+    const [openSaveAlert, setOpenSaveAlert] = useState(false);
+    const [alertMessage, setAlertMessage] = useState<string>('');
+    const [alertType, setAlertType] = useState<'success' | 'error'>('success');
 
 
     const handleAddRow = () => {
         tableRef.current?.addRow();
+
     };
 
     const navigate = useNavigate();
@@ -62,12 +70,12 @@ export default function ExtrasEdit() {
                                     name: s.find((m) => m.student_id === l.student_id)!.name,
                                     extra_mark_id: l.extra_mark_id,
                                     mark: l.value,
-                                    desc: l.desc,
+                                    desc: l.description,
                                     recom: l.recommendation,
                                     extra_id: l.extra_id
                                 }
                             })
-                            extraMarks[e.name] = stt
+                            extraMarks[e.extra_id] = stt
                             console.log(extraMarks, "extra marks built", idx)
 
 
@@ -130,9 +138,9 @@ export default function ExtrasEdit() {
         setMarks(newMarks);
     }
 
-    const handleRadioChange = (name: string) => {
+    const handleRadioChange = (extra_id: string) => {
         console.log(extras)
-        setSelectedExtra(name);
+        setSelectedExtra(extra_id);
         setStudentsColHeaders(prev => {
             if (prev.length === 1) {
                 return [
@@ -149,7 +157,7 @@ export default function ExtrasEdit() {
         // Load saved marks when radio button is clicked
         setInitStudents(prevStudents => {
             return prevStudents.map(student => {
-                const thisSavedMarks: ExtraMarkTableType[] = marks[name];
+                const thisSavedMarks: ExtraMarkTableType[] = marks[extra_id];
                 // console.log("called set init student")
                 if (thisSavedMarks !== undefined && thisSavedMarks.length !== 0) {
                     const markIdx = thisSavedMarks.findIndex((val) => val.student_id === student.student_id);
@@ -175,53 +183,140 @@ export default function ExtrasEdit() {
     }
 
     const handleSave = () => {
-        console.log(tableExtras, 'table extras')
-
+        // Part 1: Save Extras
         if (JSON.stringify(tableExtras) !== JSON.stringify(savedTableExtras)) {
-            const newExtras: Extra[] = tableExtras.map((ex) => {
-                return { extra_id: ex.extra_id ? ex.extra_id : uuidv4(), name: ex.name, report_id: report_id }
-            })
-            setExtrasToDB(newExtras).then((val) => {
+            const extrasToSave: Extra[] = tableExtras
+                .filter(ex => ex.name && ex.extra_id) // Only save extras with a name and an ID
+                .map(ex => ({ extra_id: ex.extra_id!, name: ex.name, report_id: report_id }));
+
+            setExtrasToDB(extrasToSave).then((val) => {
                 if (val) {
+                    // After saving, the current table state is the new "saved" state.
                     setSavedTableExtras(tableExtras);
-                    // setExtras(newExtras);
+                    setExtras(prev => {
+                        const map = new Map(prev.map(e => [e.extra_id, e]));
+                        extrasToSave.forEach(e => map.set(e.extra_id, e));
+                        return Array.from(map.values());
+                    });
+
+                    setAlertMessage("Perubahan Ekstrakulikuler berhasil disimpan.");
+                    setAlertType('success');
+                    setOpenSaveAlert(true);
+                    setTimeout(() => {
+                        setOpenSaveAlert(false);
+                    }, 3000);
                 }
-
+                else {
+                    setAlertMessage("Gagal menyimpan perubahan ekstrakulikuler.");
+                    setAlertType('error');
+                    setOpenSaveAlert(true);
+                    setTimeout(() => {
+                        setOpenSaveAlert(false);
+                    }, 3000);
+                }
+            }).catch((error) => {
+                console.error("Error saving extras:", error)
+                setAlertMessage("Terjadi kesalahan saat menyimpan perubahan ekstrakulikuler.")
+                setAlertType('error')
+                setOpenSaveAlert(true)
+                setTimeout(() => {
+                    setOpenSaveAlert(false)
+                }, 3000)
             });
-            if (JSON.stringify(marks) !== JSON.stringify(savedMarks)) {
-                const newMarks: ExtraMark[] = Object.entries(marks).map(([name, studentMarksArray]) => {
-                    return studentMarksArray.map((val) => {
-                        const theExtra = newExtras.find((c) => c.name === name)
-                        console.log(val.extra_mark_id, "the extras in if extras")
-                        return { extra_mark_id: val.extra_mark_id ? val.extra_mark_id : uuidv4(), value: Number(val.mark), desc: val.desc, recommendation: val.recom, student_id: val.student_id, extra_id: theExtra?.extra_id, } as ExtraMark
-                    })
-                }).flat();
-                setSavedMarks(marks);
-                setExtraMarksToDB(newMarks);
-            }
-        } else {
-            if (JSON.stringify(marks) !== JSON.stringify(savedMarks)) {
-
-                const newMarks: ExtraMark[] = Object.entries(marks).map(([name, studentMarksArray]) => {
-                    return studentMarksArray.map((val) => {
-                        const theExtra = extras.find((c) => c.name === name)
-                        console.log(name, theExtra, "the extras else extras")
-                        return { extra_mark_id: val.extra_mark_id ? val.extra_mark_id : uuidv4(), value: Number(val.mark), desc: val.desc, recommendation: val.recom, student_id: val.student_id, extra_id: theExtra?.extra_id, } as ExtraMark
-                    })
-                }).flat();
-                setSavedMarks(marks);
-                setExtraMarksToDB(newMarks);
-            }
         }
 
-        // don't use initStudent for saving, it needs radio to be updated to change
+        // Part 2: Save Marks
+        const updatedMarksState: { [extra_id: string]: ExtraMarkTableType[] } = {};
 
-        // console.log(JSON.stringify(marks), JSON.stringify(savedMarks))
+        // Iterate over each extra_id that has been loaded or interacted with.
+        Object.entries(marks).forEach(([extra_id, studentMarksArray]) => {
 
+            const marksForThisExtraPayload: ExtraMark[] = [];
 
+            const newStudentMarksArrayWithIds = studentMarksArray.map(markData => {
+                const hasContent = markData.mark || markData.desc || markData.recom;
+                const newMarkId = markData.extra_mark_id || (hasContent ? uuidv4() : undefined);
+
+                const markWithId = {
+                    ...markData,
+                    extra_mark_id: newMarkId,
+                    extra_id: extra_id
+                };
+
+                if (hasContent) {
+                    marksForThisExtraPayload.push({
+                        extra_mark_id: newMarkId!,
+                        value: Number(markData.mark) || 0,
+                        description: markData.desc || '',
+                        recommendation: markData.recom || '',
+                        student_id: markData.student_id!,
+                        extra_id: extra_id,
+                    });
+                }
+
+                return markWithId;
+            });
+
+            // Update the state object that will be set after saving.
+            updatedMarksState[extra_id] = newStudentMarksArrayWithIds;
+
+            // Check if this specific extra's marks have changed before saving.
+            // This prevents sending data for extras that weren't touched.
+            // It also correctly sends an empty array for an extra where all marks were deleted,
+            // which signals the backend to remove them.
+            const originalMarks = savedMarks[extra_id] || [];
+            if (JSON.stringify(newStudentMarksArrayWithIds) !== JSON.stringify(originalMarks)) {
+                setExtraMarksToDB(marksForThisExtraPayload).then((val) => {
+                    if (val) {
+                        console.log(`Marks for extra ${extra_id} saved successfully.`);
+                        setAlertMessage(`Perubahan nilai untuk ekstrakulikuler ${extra_id} berhasil disimpan.`);
+                        setAlertType('success');
+                        setOpenSaveAlert(true);
+                        setTimeout(() => {
+                            setOpenSaveAlert(false);
+                        }, 3000);
+                    }
+                }).catch((error) => {
+                    console.error(`Error saving marks for extra ${extra_id}:`, error)
+                    setAlertMessage(`Terjadi kesalahan saat menyimpan perubahan nilai untuk ekstrakulikuler ${extra_id}.`)
+                    setAlertType('error');
+                    setOpenSaveAlert(true);
+                    setTimeout(() => {
+                        setOpenSaveAlert(false);
+                    }, 3000)
+                })
+                    ;
+            }
+        });
+
+        // Crucially, update the local state with the version that includes the new IDs.
+        setMarks(updatedMarksState);
+        setSavedMarks(updatedMarksState);
     }
+
     return (
         <div className="flex flex-col mr-3">
+            {openDialog && (<ConfirmDialog
+                open={openDialog}
+                header="Anda Belum Menyimpan Perubahan!"
+                message="Apakah Anda yakin ingin meninggalkan halaman ini tanpa menyimpan perubahan?"
+                confirmText="Ya, Kembali"
+                confirmColor="red"
+                dismissText="Tidak, Tetap di Halaman Ini"
+                dismissColor="blue"
+                onDismiss={() => setOpenDialog(false)}
+                onConfirm={() => navigate('..')} />
+            )}
+            {openSaveAlert && (
+                <Alert color={alertType} className="m-3">
+                    <Alert.Icon>
+                        {alertType === 'success' ? (<CheckCircleIcon />) : (<ExclamationCircleIcon className="h-6 w-6" />)}
+                    </Alert.Icon>
+                    <Alert.Content>
+                        {alertMessage}
+                    </Alert.Content>
+                </Alert>
+            )}
             <div className="flex flex-row">
                 <Card className="m-4 w-fit p-3">
                     <Button
@@ -276,7 +371,21 @@ export default function ExtrasEdit() {
                                         key={`${idx}-${ex.extra_id}`}
                                         title={ex.name}
                                         id={ex.name}
-                                        onChange={() => handleRadioChange(ex.name)}
+                                        onChange={() => {
+                                            if (ex.extra_id === undefined) {
+                                                const uuid = uuidv4();
+                                                const newExtra: Extra = { extra_id: uuid, name: ex.name, report_id: report_id };
+                                                setExtras(prev => [...prev, newExtra]);
+                                                setInitTableExtras(prev => prev.map((item) => item.extra_id === ex.extra_id ? { ...item, extra_id: uuid } : item));
+                                                setMarks(prevMarks => ({ ...prevMarks, [uuid]: [] }));
+                                                handleRadioChange(uuid);
+                                                console.log("Extra id undefined, created new extra with id:", uuid);
+                                            }
+                                            else {
+                                                handleRadioChange(ex.extra_id)
+
+                                            }
+                                        }}
                                     >
                                         <Radio.Indicator />
                                     </Radio.Item>
