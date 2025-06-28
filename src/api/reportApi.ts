@@ -245,7 +245,7 @@ export async function getSubjectMarksBySubjectIds(subject_ids: string[]): Promis
 export async function setSubjectMarks(subject_marks_data: SubjectMarks[]) {
 
     try {
-        const response = await axios.post(`${BASE_URL}/api/subjects/set-marks`, subject_marks_data);
+        const response = await axios.post(`${BASE_URL}/api/subjects/set-marks`, subject_marks_data, { timeout: 40000 });
         const status = response.status;
         console.log(response.data, "subject marks setted");
         if (status == 200) return true

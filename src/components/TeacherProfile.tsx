@@ -27,7 +27,7 @@ export default function TeacherProfile() {
                                 <span className="text-white text-sm">✓</span>
                             </div>
                         </div>
-                        
+
                         {/* Profile Info */}
                         <div className="text-center sm:text-left flex-1">
                             <Typography className="text-white font-bold text-2xl sm:text-3xl mb-2">
@@ -39,16 +39,13 @@ export default function TeacherProfile() {
                                     <span className="font-medium">{user?.nip || "NIP tidak tersedia"}</span>
                                 </div>
                                 <div className="hidden sm:block w-1 h-1 bg-white/50 rounded-full"></div>
-                                <div className="flex items-center space-x-2">
-                                    <span className="text-lg">📚</span>
-                                    <span className="font-medium">{user?.subject || "Mata Pelajaran"}</span>
-                                </div>
+
                             </div>
                         </div>
 
                         {/* Action Button */}
                         <div className="flex space-x-2">
-                            <button 
+                            <button
                                 onClick={() => setIsEditing(!isEditing)}
                                 className="px-4 py-2 bg-white/20 backdrop-blur-sm text-white rounded-xl hover:bg-white/30 transition-all duration-300 font-medium text-sm border border-white/30 hover:border-white/50"
                             >
@@ -60,42 +57,7 @@ export default function TeacherProfile() {
 
                 {/* Profile Details */}
                 <div className="p-6 sm:p-8">
-                    {/* Quick Stats */}
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
-                        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-xl border border-blue-100">
-                            <div className="flex items-center space-x-3">
-                                <div className="p-2 bg-blue-500 rounded-lg">
-                                    <span className="text-white text-lg">📋</span>
-                                </div>
-                                <div>
-                                    <p className="text-blue-800 font-semibold text-lg">5</p>
-                                    <p className="text-blue-600 text-sm">Kelas Diampu</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-4 rounded-xl border border-green-100">
-                            <div className="flex items-center space-x-3">
-                                <div className="p-2 bg-green-500 rounded-lg">
-                                    <span className="text-white text-lg">👥</span>
-                                </div>
-                                <div>
-                                    <p className="text-green-800 font-semibold text-lg">120</p>
-                                    <p className="text-green-600 text-sm">Total Siswa</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="bg-gradient-to-r from-purple-50 to-indigo-50 p-4 rounded-xl border border-purple-100">
-                            <div className="flex items-center space-x-3">
-                                <div className="p-2 bg-purple-500 rounded-lg">
-                                    <span className="text-white text-lg">⭐</span>
-                                </div>
-                                <div>
-                                    <p className="text-purple-800 font-semibold text-lg">4.8</p>
-                                    <p className="text-purple-600 text-sm">Rating</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+
 
                     {/* Profile Fields */}
                     <div className="space-y-4">
@@ -122,24 +84,13 @@ export default function TeacherProfile() {
                                                 {field.label}
                                             </Typography>
                                             <div className="break-words">
-                                                {field.key === "status" ? (
-                                                    getStatusBadge(field.value || "Aktif")
-                                                ) : field.isEmail && field.value && field.value !== "Belum diatur" ? (
-                                                    <a
-                                                        href={`mailto:${field.value}`}
-                                                        className="text-blue-600 hover:text-blue-800 font-medium text-sm sm:text-base transition-colors duration-300 hover:underline"
-                                                    >
-                                                        {field.value}
-                                                    </a>
-                                                ) : (
-                                                    <Typography className={`font-medium text-sm sm:text-base ${
-                                                        field.value === "Belum diatur" 
-                                                            ? "text-gray-400 italic" 
-                                                            : "text-gray-800"
+
+                                                <Typography className={`font-medium text-sm sm:text-base ${field.value === "Belum diatur"
+                                                    ? "text-gray-400 italic"
+                                                    : "text-gray-800"
                                                     }`}>
-                                                        {field.value || "Tidak tersedia"}
-                                                    </Typography>
-                                                )}
+                                                    {field.value || "Tidak tersedia"}
+                                                </Typography>
                                             </div>
                                         </div>
                                     </div>
@@ -148,47 +99,6 @@ export default function TeacherProfile() {
                         </div>
                     </div>
 
-                    {/* Recent Activity */}
-                    <div className="mt-8 p-6 bg-gradient-to-r from-slate-50 to-gray-50 rounded-xl border border-slate-200">
-                        <div className="flex items-center space-x-3 mb-4">
-                            <span className="text-2xl">📊</span>
-                            <Typography className="font-bold text-gray-800">
-                                Aktivitas Terbaru
-                            </Typography>
-                        </div>
-                        <div className="space-y-3">
-                            <div className="flex items-center space-x-3 text-sm">
-                                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                                <span className="text-gray-600">Mengupdate rapor kelas 1A - 2 jam yang lalu</span>
-                            </div>
-                            <div className="flex items-center space-x-3 text-sm">
-                                <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                                <span className="text-gray-600">Login sistem - 4 jam yang lalu</span>
-                            </div>
-                            <div className="flex items-center space-x-3 text-sm">
-                                <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
-                                <span className="text-gray-600">Menambah data siswa baru - 1 hari yang lalu</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Footer Actions */}
-                    <div className="mt-8 flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-100">
-                        <div className="flex items-center space-x-2 text-blue-700">
-                            <span className="text-lg">ℹ️</span>
-                            <Typography className="text-sm font-medium">
-                                Profil terakhir diperbarui: {new Date().toLocaleDateString('id-ID')}
-                            </Typography>
-                        </div>
-                        <div className="flex space-x-3">
-                            <button className="px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-xl text-sm font-medium hover:from-blue-600 hover:to-indigo-700 transition-all duration-300 shadow-md hover:shadow-lg">
-                                📄 Unduh Profil
-                            </button>
-                            <button className="px-4 py-2 bg-white border border-blue-200 text-blue-700 rounded-xl text-sm font-medium hover:bg-blue-50 transition-all duration-300 shadow-sm hover:shadow-md">
-                                🔄 Sinkronisasi
-                            </button>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>

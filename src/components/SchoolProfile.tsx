@@ -26,18 +26,18 @@ export default function SchoolProfile() {
   }, []);
 
   const schoolFields = [
-    { label: "Dinas Pendidikan", value: school?.dinasPendidikan },
+    { label: "Dinas Pendidikan", value: school?.dinas_pendidikan },
     { label: "NPSN", value: school?.npsn },
-    { label: "NSS", value: school?.nss},
+    { label: "NSS", value: school?.nss },
     { label: "Alamat", value: school?.alamat },
-    { label: "Satuan Pendidikan", value: school?.satuanPendidikan },
-    { label: "Kecamatan", value: school?.kecamatan},
+    { label: "Satuan Pendidikan", value: school?.satuan_pendidikan },
+    { label: "Kecamatan", value: school?.kecamatan },
     { label: "Kabupaten", value: school?.kabupaten },
-    { label: "Provinsi", value: school?.provinsi},
-    { label: "Kode Pos", value: school?.kodePos},
+    { label: "Provinsi", value: school?.provinsi },
+    { label: "Kode Pos", value: school?.kode_pos },
     { label: "Website", value: school?.website, isLink: true },
     { label: "E-Mail", value: school?.email, isLink: true },
-    { label: "No. Telepon", value: school?.telp}
+    { label: "No. Telepon", value: school?.telp }
   ];
 
   if (loading) {
@@ -99,12 +99,12 @@ export default function SchoolProfile() {
             {/* School Name - Featured */}
             <div className="mb-6 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-100">
               <Typography className="font-bold text-xl sm:text-2xl text-blue-800 text-center mb-2">
-                {school.namaSekolah || "Nama Sekolah"}
+                {school.satuan_pendidikan || "Nama Sekolah"}
               </Typography>
               <div className="flex justify-center items-center space-x-2 text-blue-600">
                 <span>🎓</span>
                 <Typography className="text-sm font-medium">
-                  {school.satuanPendidikan}
+                  {school.dinas_pendidikan}
                 </Typography>
               </div>
             </div>
@@ -117,9 +117,7 @@ export default function SchoolProfile() {
                   className="group bg-gradient-to-r from-gray-50 to-gray-100 hover:from-blue-50 hover:to-indigo-50 p-4 rounded-xl border border-gray-200 hover:border-blue-200 transition-all duration-300 hover:shadow-md"
                 >
                   <div className="flex items-start space-x-3">
-                    <div className="text-2xl group-hover:scale-110 transition-transform duration-300">
-                      {field.icon}
-                    </div>
+
                     <div className="flex-1 min-w-0">
                       <Typography className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">
                         {field.label}

@@ -39,7 +39,7 @@ export default function StudentsEdit() {
     const [isSaving, setIsSaving] = useState(false);
     const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
     const [successMessage, setSuccessMessage] = useState<string>('');
-    const [errorMessage, setErrorMessage] = useState<string>('');    
+    const [errorMessage, setErrorMessage] = useState<string>('');
     const [openDialog, setOpenDialog] = useState(false);
     const [openSaveAlert, setOpenSaveAlert] = useState(false);
     const [alertMessage, setAlertMessage] = useState<string>('');
@@ -81,7 +81,7 @@ export default function StudentsEdit() {
     }, [report_id]);
 
     const handleTableChange = (
-        updatedData: (CPTableType | ExtraTableType | ExtraMarkTableType | StudentTableType)[], 
+        updatedData: (CPTableType | ExtraTableType | ExtraMarkTableType | StudentTableType)[],
         isDelete: boolean
     ) => {
         setInitRows(updatedData as StudentTableType[]);
@@ -92,7 +92,7 @@ export default function StudentsEdit() {
     const handleSave = async () => {
         setIsSaving(true);
         clearMessages();
-        
+
         try {
             const result = await setStudentData(initRows as Student[], report_id);
             if (result) {
@@ -112,15 +112,16 @@ export default function StudentsEdit() {
                     setOpenSaveAlert(false);
                 }, 3000);
             }
-        }).catch((err) => {
-            console.log(err);
+        } catch (error) {
+            console.error('Error saving student data:', error);
             setAlertMessage('Terjadi kesalahan saat menyimpan data siswa!');
             setAlertType('error');
             setOpenSaveAlert(true);
             setTimeout(() => {
                 setOpenSaveAlert(false);
             }, 3000);
-        })
+        }
+    }
 
     const handleBack = () => {
         if (hasUnsavedChanges) {
@@ -162,7 +163,7 @@ export default function StudentsEdit() {
                                 <p className="text-sm text-gray-600">Kelola informasi data siswa</p>
                             </div>
                         </div>
-                        
+
                         <div className="flex items-center space-x-3">
                             {hasUnsavedChanges && (
                                 <div className="flex items-center space-x-2 bg-yellow-50 px-3 py-2 rounded-lg border border-yellow-200">
@@ -170,9 +171,9 @@ export default function StudentsEdit() {
                                     <span className="text-sm text-yellow-700 font-medium">Perubahan belum disimpan</span>
                                 </div>
                             )}
-                            
+
                             <Button
-                                variant="outlined"
+                                variant="outline"
                                 className="flex items-center space-x-2 px-4 py-2 border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors duration-200"
                                 onClick={handleBack}
                             >
@@ -219,7 +220,7 @@ export default function StudentsEdit() {
                             <p className="text-green-700 font-medium">{successMessage}</p>
                         </div>
                     )}
-                    
+
                     {errorMessage && (
                         <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-center space-x-3 mb-4">
                             <div className="flex-shrink-0">
@@ -244,7 +245,7 @@ export default function StudentsEdit() {
                                     Total: <span className="font-medium text-blue-600">{initRows.length}</span> siswa
                                 </p>
                             </div>
-                            
+
                             <Button
                                 className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-md hover:shadow-lg transition-all duration-200 transform hover:scale-105"
                                 onClick={handleAddRow}
@@ -287,7 +288,7 @@ export default function StudentsEdit() {
                                 </p>
                             </div>
                         </div>
-                        
+
                         <div className="flex items-center space-x-4 text-sm text-gray-500">
                             <div className="flex items-center space-x-1">
                                 <div className="w-2 h-2 bg-green-400 rounded-full"></div>

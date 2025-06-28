@@ -77,7 +77,7 @@ export default function ProfileEdit() {
         <div>
 
             <TeacherProfile />
-            <div className="w-full top-0 right-0 flex-col-reverse">
+            <div className="w-full top-0 right-0 flex-col-reverse p-2 m-2">
                 <Button
                     variant="ghost"
                     onClick={() => navigate("/profile/edit-teacher")} className="flex top-0 right-0 ml-3 object-right p-3 group relative overflow-hidden
@@ -92,18 +92,27 @@ export default function ProfileEdit() {
                                 border-0">
                     <h1>Edit Profil Guru</h1>
                 </Button>
-        
-                    <Button
-                        variant="ghost"
-                        onClick={() => {
-                            localStorage.removeItem("user");
-                            navigate("/login");
-                            setUser(null);
-                        }}
-                        className="flex top-0 right-0 ml-3 object-right p-3 bg-red-500"
-                    >
-                        Logout
-                    </Button>
+
+                <Button
+                    variant="ghost"
+                    onClick={() => {
+                        localStorage.removeItem("user");
+                        navigate("/login");
+                        setUser(null);
+                    }}
+                    className=" flex top-0 right-0 ml-3 object-right p-3 group relative overflow-hidden
+                                bg-gradient-to-r from-red-500 to-red-600
+                                hover:from-red-600 hover:to-red-700
+                                shadow-lg shadow-green-500/25 hover:shadow-xl hover:shadow-green-500/30
+                                text-white font-semibold
+                                px-6 py-3 rounded-xl
+                                transition-all duration-300 ease-out
+                                transform hover:-translate-y-0.5 hover:scale-105
+                                focus:ring-4 focus:ring-green-200
+                                border-0"
+                >
+                    Logout
+                </Button>
 
             </div>
             <SchoolProfile />

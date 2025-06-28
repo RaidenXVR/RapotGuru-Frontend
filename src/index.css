@@ -13,4 +13,13 @@
         height: 297mm;
         page-break-after: always;
     }
+
+    .report-card-container {
+        transform: scale(0.80);
+        transform-origin: top left;
+        width: 105.26% !important;
+        /* 100 / 0.95 */
+        height: 105.26% !important;
+        /* 100 / 0.95 */
+    }
 }

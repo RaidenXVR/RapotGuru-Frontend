@@ -60,20 +60,20 @@ export async function updateSchoolData(
   try {
     const response = await axios.post(`${BASE_URL}/api/schools/${npsn}/update-school`,
       {
-        dinasPendidikan: dinasPendidikan,
-        satuanPendidikan: satuanPendidikan,
+        dinas_pendidikan: dinasPendidikan,
+        satuan_pendidikan: satuanPendidikan,
         nss: nss,
         alamat: alamat,
         desa: desa,
         kecamatan: kecamatan,
         kabupaten: kabupaten,
         provinsi: provinsi,
-        kodePos: kodePos,
+        kode_pos: kodePos,
         website: website,
         email: email,
         telp: telp,
-        kepalaSekolah: kepalaSekolah,
-        nipKepalaSekolah: nipKepalaSekolah
+        kepala_sekolah: kepalaSekolah,
+        nip_kepala_sekolah: nipKepalaSekolah
       })
 
     const status = await response.status;

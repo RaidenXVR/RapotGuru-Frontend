@@ -95,7 +95,7 @@ export default function CardPreviewPage() {
         for (let i = 0; i < studentData.length; i++) {
             const student = studentData[i];
             setCurrentStudent(student);
-            await new Promise((resolve) => setTimeout(resolve, 300)); // Memberi sedikit waktu untuk React merender ulang
+            // await new Promise((resolve) => setTimeout(resolve, 300)); // Memberi sedikit waktu untuk React merender ulang
 
             // Card 1
             if (card1Ref.current) {
@@ -195,29 +195,12 @@ export default function CardPreviewPage() {
             setCurrentStudent(data[0]);
             setCurrentStudentIndex(0);
 
-            if (subjectsRes) {
-                setSubjects(subjectsRes);
-                const subjectIds = subjectsRes.map(subject => subject.subject_id);
-                const [marks, cpsData] = await Promise.all([
-                    getSubjectMarksBySubjectIds(subjectIds),
-                    getCPsBySubjectIDs(subjectIds)
-                ]);
-                setSubjectsMark(marks);
-                setCPs(cpsData);
-            }
 
-            if (extrasRes) {
-                setExtras(extrasRes);
-                const extraIds = extrasRes.map(extra => extra.extra_id);
-                const marks = await getExtraMarksByExtraIds(extraIds);
-                setExtrasMark(marks);
-            }
         }).catch(error => {
             console.error("Error fetching data:", error);
             // Handle error, mungkin tampilkan pesan kepada pengguna
         });
-    }, [report_id]); // Tambahkan report_id sebagai dependency
-
+    }, []);
     return (
         <div className="min-h-screen bg-blue-gray-50 p-8">
             <div className="flex flex-col md:flex-row justify-center items-center gap-4 p-4 mb-8 bg-white shadow-lg rounded-xl mx-auto max-w-5xl">

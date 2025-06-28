@@ -117,10 +117,14 @@ export default function SubjectMarksEdit() {
 
                     setCPs(prev => ({ ...prev, ...thisCps }));
 
-                    // For each subject, fetch all marks (CP and Other)
                     getSubjectMarksBySubjectIds(sub_ids).then((thisMarks) => {
                         setMarks(thisMarks);
+                        console.log("Fetched Marks:", thisMarks);
                         const subjectMarks: { [subject_id: string]: SubjectMarksTableTypes[] } = {};
+
+                        // Flatten all marks from the response to make processing more robust
+                        const allCpMarks = thisMarks.flatMap(m => m.cp_marks);
+                        const allOtherMarks = thisMarks.flatMap(m => m.other_marks);
 
                         thisSubject.forEach(subject => {
                             const subject_id = subject.subject_id;
@@ -130,27 +134,25 @@ export default function SubjectMarksEdit() {
                                 name: st.name
                             }));
 
-                            // Find the marks for this subject from the fetched marks
-                            const marksForSubject = thisMarks.find(m => m.subject_id === subject_id);
+                            // Populate the rows with existing marks and their IDs
+                            studentRows.forEach(row => {
+                                // Find CP marks for this specific student and subject
+                                allCpMarks
+                                    .filter(m => m.student_id === row.student_id && m.subject_id === subject_id)
+                                    .forEach(cpMark => {
+                                        const fieldName = cpMark.cp_num.replace(/(\d+)\.(\d+)/, 'cp_$1_$2');
+                                        row[fieldName] = cpMark.value;
+                                        row[`${fieldName}_id`] = (cpMark as any).mark_id;
+                                    });
 
-                            if (marksForSubject) {
-                                // Populate the rows with existing marks and their IDs
-                                studentRows.forEach(row => {
-                                    marksForSubject.cp_marks
-                                        .filter(m => m.student_id === row.student_id)
-                                        .forEach(cpMark => {
-                                            const fieldName = cpMark.cp_num.replace(/(\d+)\.(\d+)/, 'cp_$1_$2');
-                                            row[fieldName] = cpMark.value;
-                                            row[`${fieldName}_id`] = (cpMark as any).mark_id;
-                                        });
-                                    marksForSubject.other_marks
-                                        .filter(m => m.student_id === row.student_id)
-                                        .forEach(otherMark => {
-                                            row[otherMark.type] = otherMark.value;
-                                            row[`${otherMark.type}_id`] = (otherMark as any).mark_id;
-                                        });
-                                });
-                            }
+                                // Find Other marks for this specific student and subject
+                                allOtherMarks
+                                    .filter(m => m.student_id === row.student_id && m.subject_id === subject_id)
+                                    .forEach(otherMark => {
+                                        row[otherMark.type] = otherMark.value;
+                                        row[`${otherMark.type}_id`] = (otherMark as any).mark_id;
+                                    });
+                            });
                             subjectMarks[subject_id] = studentRows;
                         });
 
@@ -199,6 +201,7 @@ export default function SubjectMarksEdit() {
         } else {
 
             setInitRows(subjectMarks);
+            console.log("Changed Subject Marks On Change:", changedData);
         }
         setCurrentSubject(subject_id);
     };

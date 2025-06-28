@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useLayoutEffect } from 'react';
 import type { Student } from '../types/Student';
 import type { School } from '../types/School';
 import type { User } from '../types/User';
@@ -24,6 +24,32 @@ const StudentReportCard = ({ student_data, report_data, school_profile, subjects
     const [subjectsA, setSubjectsA] = React.useState<FlattenedSubjectMarks[]>([]);
     const [subjectsB, setSubjectsB] = React.useState<FlattenedSubjectMarks[]>([]);
     const [localSubjects, setLocalSubjects] = React.useState<FlattenedSubjectMarks[]>([]);
+    const reportRef = React.useRef<HTMLDivElement>(null);
+    useLayoutEffect(() => {
+        const reportElement = reportRef.current;
+        if (!reportElement) return;
+
+        const a4HeightPx = 297 * (90 / 25.4); // A4 height in pixels at 90 DPI
+        const contentHeight = reportElement.scrollHeight;
+
+        if (contentHeight > a4HeightPx) {
+            const scale = a4HeightPx / contentHeight;
+            reportElement.style.transform = `scale(${scale})`;
+            reportElement.style.transformOrigin = 'top center';
+            // Compensate for the width reduction from scaling
+            reportElement.style.width = `${100 / scale}%`;
+            // Adjust left position to keep it centered after width change
+            reportElement.style.left = `${(100 - (100 / scale)) / 2}%`;
+            reportElement.style.position = 'relative';
+        } else {
+            // Reset styles if no scaling is needed
+            reportElement.style.transform = 'none';
+            reportElement.style.width = '100%';
+            reportElement.style.left = '0';
+            reportElement.style.position = 'static';
+        }
+    }, [subjectsA, subjectsB, localSubjects]); // Rerun when content changes
+
 
     useEffect(() => {
         const subjectAGroup = subjects.filter(subject => subject.subject_category === 'Kelompok A');
@@ -122,7 +148,8 @@ const StudentReportCard = ({ student_data, report_data, school_profile, subjects
     }, [subjects, subjects_mark, cps, student_data]);
 
     return (
-        <div className="max-w-4xl mx-auto p-6 text-sm font-sans text-black bg-white print:bg-white print:text-black"
+        <div ref={reportRef}
+            className="max-w-4xl mx-auto p-6 text-sm font-sans text-black bg-white print:bg-white print:text-black"
             style={{
                 width: '210mm', // A4 width
                 height: '297mm', // A4 height
@@ -327,6 +354,32 @@ export const StudentReportCardPage2 = ({ user, student_data, report_data, school
     const [extrasData, setExtrasData] = React.useState<FlattenedExtraMarks[]>([]);
     const [notesAttendanceData, setNotesAttendanceData] = React.useState<NotesAttendance>();
     const [decision, setDecision] = React.useState<string>('');
+    const reportRef = React.useRef<HTMLDivElement>(null);
+    useLayoutEffect(() => {
+        const reportElement = reportRef.current;
+        if (!reportElement) return;
+
+        const a4HeightPx = 297 * (90 / 25.4); // A4 height in pixels at 90 DPI
+        const contentHeight = reportElement.scrollHeight;
+
+        if (contentHeight > a4HeightPx) {
+            const scale = a4HeightPx / contentHeight;
+            reportElement.style.transform = `scale(${scale})`;
+            reportElement.style.transformOrigin = 'top center';
+            // Compensate for the width reduction from scaling
+            reportElement.style.width = `${100 / scale}%`;
+            // Adjust left position to keep it centered after width change
+            reportElement.style.left = `${(100 - (100 / scale)) / 2}%`;
+            reportElement.style.position = 'relative';
+        } else {
+            // Reset styles if no scaling is needed
+            reportElement.style.transform = 'none';
+            reportElement.style.width = '100%';
+            reportElement.style.left = '0';
+            reportElement.style.position = 'static';
+        }
+    }, [extrasData, notesAttendanceData]); // Rerun when content changes
+
 
     const mapPredicate = (value: number) => {
         switch (value) {
@@ -381,6 +434,7 @@ export const StudentReportCardPage2 = ({ user, student_data, report_data, school
 
     return (
         <div
+            ref={reportRef}
             className="max-w-4xl mx-auto p-6 text-sm font-sans text-black bg-white print:bg-white print:text-black"
             style={{
                 width: '210mm', // A4 width

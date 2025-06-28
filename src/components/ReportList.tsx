@@ -43,7 +43,7 @@ export default function ReportList() {
         const now = new Date();
         const deadlineDate = new Date(deadline);
         const daysLeft = Math.ceil((deadlineDate.getTime() - now.getTime()) / (1000 * 3600 * 24));
-        
+
         if (daysLeft < 0) {
             return <span className="px-3 py-1 text-xs font-semibold bg-red-100 text-red-800 rounded-full">Terlambat</span>;
         } else if (daysLeft <= 7) {
@@ -145,7 +145,7 @@ export default function ReportList() {
                                         Semester
                                     </th>
                                     <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                        Status
+                                        Titi Mangsa
                                     </th>
                                     <th className="px-6 py-4 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">
                                         Aksi
@@ -185,9 +185,9 @@ export default function ReportList() {
                                         </td>
                                         <td className="px-6 py-4">
                                             <div className="flex flex-col gap-1">
-                                                {getStatusBadge(rep.deadline)}
+
                                                 <span className="text-xs text-gray-500">
-                                                    {new Date(rep.deadline).toLocaleDateString('id-ID')}
+                                                    {rep.deadline}
                                                 </span>
                                             </div>
                                         </td>
