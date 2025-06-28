@@ -30,89 +30,260 @@ const studentColHeaders: ColHeaderProps[] = [
     { field: 'phone_num', headerName: 'Nomor HP', editable: true, width: 150, centerHeader: true, dataType: 'text' },
 ];
 
-
 export default function StudentsEdit() {
-
     const [initRows, setInitRows] = useState<StudentTableType[]>([]);
-    const [savedTableStudents, setSavedTableStudents] = useState<StudentTableType[]>(initRows)
-    const isInitState = useRef(true)
+    const [savedTableStudents, setSavedTableStudents] = useState<StudentTableType[]>(initRows);
+    const [isLoading, setIsLoading] = useState(true);
+    const [isSaving, setIsSaving] = useState(false);
+    const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+    const [successMessage, setSuccessMessage] = useState<string>('');
+    const [errorMessage, setErrorMessage] = useState<string>('');
+    
+    const isInitState = useRef(true);
     const tableRef = useRef<TableGridRef>(null);
     const location = useLocation();
     const report_id = location.state.report_id;
     const navigate = useNavigate();
 
-
     const handleAddRow = () => {
         tableRef.current?.addRow();
+        setHasUnsavedChanges(true);
+    };
+
+    const clearMessages = () => {
+        setSuccessMessage('');
+        setErrorMessage('');
     };
 
     useEffect(() => {
-        if (isInitState) {
-            getStudentsByReport(report_id).then((val) => {
-                const stu: StudentTableType[] = val.map((st) => {
-                    return st as StudentTableType
+        if (isInitState.current) {
+            setIsLoading(true);
+            getStudentsByReport(report_id)
+                .then((val) => {
+                    const stu: StudentTableType[] = val.map((st) => st as StudentTableType);
+                    setInitRows(stu);
+                    setSavedTableStudents(stu);
                 })
-                setInitRows(stu);
-                setSavedTableStudents(stu);
-            })
+                .catch((err) => {
+                    console.error('Error loading students:', err);
+                    setErrorMessage('Gagal memuat data siswa');
+                })
+                .finally(() => {
+                    setIsLoading(false);
+                    isInitState.current = false;
+                });
         }
-    }, [])
+    }, [report_id]);
 
-    const handleTableChange = (updatedData: (CPTableType | ExtraTableType | ExtraMarkTableType | StudentTableType)[], isDelete: boolean) => {
-        setInitRows(updatedData as StudentTableType[])
-    }
+    const handleTableChange = (
+        updatedData: (CPTableType | ExtraTableType | ExtraMarkTableType | StudentTableType)[], 
+        isDelete: boolean
+    ) => {
+        setInitRows(updatedData as StudentTableType[]);
+        setHasUnsavedChanges(true);
+        clearMessages();
+    };
 
-    const handleSave = () => {
-        setStudentData(initRows as Student[], report_id).then((val) => {
-            if (val) {
+    const handleSave = async () => {
+        setIsSaving(true);
+        clearMessages();
+        
+        try {
+            const result = await setStudentData(initRows as Student[], report_id);
+            if (result) {
                 setSavedTableStudents(initRows);
+                setHasUnsavedChanges(false);
+                setSuccessMessage('Data siswa berhasil disimpan!');
+            } else {
+                setErrorMessage('Gagal menyimpan data. Silakan coba lagi.');
             }
-            else {
-                // trow error
-            }
-        }).catch((err) => {
-            console.log(err)
-        })
+        } catch (err) {
+            console.error('Save error:', err);
+            setErrorMessage('Terjadi kesalahan saat menyimpan data.');
+        } finally {
+            setIsSaving(false);
+        }
+    };
 
+    const handleBack = () => {
+        if (hasUnsavedChanges) {
+            const confirmLeave = window.confirm(
+                'Anda memiliki perubahan yang belum disimpan. Apakah Anda yakin ingin keluar?'
+            );
+            if (!confirmLeave) return;
+        }
+        navigate('..');
+    };
+
+    if (isLoading) {
+        return (
+            <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
+                <div className="bg-white rounded-lg shadow-lg p-8">
+                    <div className="flex items-center space-x-4">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                        <p className="text-gray-700 font-medium">Memuat data siswa...</p>
+                    </div>
+                </div>
+            </div>
+        );
     }
 
     return (
-        <div>
-            <div className="w-screen m-3 flex justify-evenly">
-                <Button
-                    variant="ghost"
-                    className="p-3 bg-blue-600"
-                    onClick={() => navigate('..')} >
-                    <p className="text-white">
-                        Kembali
-                    </p>
-                </Button>
+        <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+            {/* Header Section */}
+            <div className="bg-white shadow-md border-b border-gray-200">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="flex items-center justify-between py-6">
+                        <div className="flex items-center space-x-4">
+                            <div className="bg-blue-100 p-2 rounded-lg">
+                                <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
+                                </svg>
+                            </div>
+                            <div>
+                                <h1 className="text-2xl font-bold text-gray-900">Edit Data Siswa</h1>
+                                <p className="text-sm text-gray-600">Kelola informasi data siswa</p>
+                            </div>
+                        </div>
+                        
+                        <div className="flex items-center space-x-3">
+                            {hasUnsavedChanges && (
+                                <div className="flex items-center space-x-2 bg-yellow-50 px-3 py-2 rounded-lg border border-yellow-200">
+                                    <div className="w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></div>
+                                    <span className="text-sm text-yellow-700 font-medium">Perubahan belum disimpan</span>
+                                </div>
+                            )}
+                            
+                            <Button
+                                variant="outlined"
+                                className="flex items-center space-x-2 px-4 py-2 border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors duration-200"
+                                onClick={handleBack}
+                            >
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                                </svg>
+                                <span>Kembali</span>
+                            </Button>
 
-                <Button
-                    variant="ghost"
-                    className="p-3 bg-green-600" onClick={handleSave}>
-                    <p className='text-white'>
-                        Simpan Perubahan
-                    </p>
-                </Button>
+                            <Button
+                                className="flex items-center space-x-2 px-6 py-2 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
+                                onClick={handleSave}
+                                disabled={isSaving || !hasUnsavedChanges}
+                            >
+                                {isSaving ? (
+                                    <>
+                                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                                        <span>Menyimpan...</span>
+                                    </>
+                                ) : (
+                                    <>
+                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                        </svg>
+                                        <span>Simpan Perubahan</span>
+                                    </>
+                                )}
+                            </Button>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <SpreadsheetTable
-                ref={tableRef}
-                isNumbered={true}
-                columnHeaders={studentColHeaders}
-                initRowsData={initRows}
-                isRowDeletable={true}
-                onRowDataChange={handleTableChange}
-            />
-            <div className="w-screen m-3 flex items-center justify-center">
-                <Button
-                    variant="ghost"
-                    className="w-100 m-3 p-3 bg-green-600"
-                    onClick={handleAddRow}>
-                    <p className='text-white'>Tambah Baris</p>
-                </Button>
+            {/* Messages */}
+            {(successMessage || errorMessage) && (
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4">
+                    {successMessage && (
+                        <div className="bg-green-50 border border-green-200 rounded-lg p-4 flex items-center space-x-3 mb-4">
+                            <div className="flex-shrink-0">
+                                <svg className="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                            </div>
+                            <p className="text-green-700 font-medium">{successMessage}</p>
+                        </div>
+                    )}
+                    
+                    {errorMessage && (
+                        <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-center space-x-3 mb-4">
+                            <div className="flex-shrink-0">
+                                <svg className="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                            </div>
+                            <p className="text-red-700 font-medium">{errorMessage}</p>
+                        </div>
+                    )}
+                </div>
+            )}
+
+            {/* Table Section */}
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+                <div className="bg-white rounded-xl shadow-xl border border-gray-200 overflow-hidden">
+                    <div className="border-b border-gray-200 bg-gray-50 px-6 py-4">
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <h2 className="text-lg font-semibold text-gray-900">Tabel Data Siswa</h2>
+                                <p className="text-sm text-gray-600 mt-1">
+                                    Total: <span className="font-medium text-blue-600">{initRows.length}</span> siswa
+                                </p>
+                            </div>
+                            
+                            <Button
+                                className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-md hover:shadow-lg transition-all duration-200 transform hover:scale-105"
+                                onClick={handleAddRow}
+                            >
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                                </svg>
+                                <span>Tambah Siswa</span>
+                            </Button>
+                        </div>
+                    </div>
+
+                    <div className="overflow-hidden">
+                        <SpreadsheetTable
+                            ref={tableRef}
+                            isNumbered={true}
+                            columnHeaders={studentColHeaders}
+                            initRowsData={initRows}
+                            isRowDeletable={true}
+                            onRowDataChange={handleTableChange}
+                        />
+                    </div>
+                </div>
             </div>
-        </div >
-    )
+
+            {/* Footer Section */}
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
+                <div className="bg-white rounded-lg shadow-md border border-gray-200 p-6">
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-3">
+                            <div className="bg-blue-100 p-2 rounded-lg">
+                                <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                            </div>
+                            <div>
+                                <p className="text-sm font-medium text-gray-900">Tips Penggunaan</p>
+                                <p className="text-xs text-gray-600 mt-1">
+                                    Klik dua kali pada sel untuk mengedit • Tekan Delete untuk menghapus baris yang dipilih
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div className="flex items-center space-x-4 text-sm text-gray-500">
+                            <div className="flex items-center space-x-1">
+                                <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+                                <span>Data tersimpan</span>
+                            </div>
+                            <div className="flex items-center space-x-1">
+                                <div className="w-2 h-2 bg-yellow-400 rounded-full"></div>
+                                <span>Perubahan belum disimpan</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
 }
