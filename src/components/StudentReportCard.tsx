@@ -114,7 +114,12 @@ const StudentReportCard = ({ student_data, report_data, school_profile, subjects
         setSubjectsB(subjectBMarks);
         setLocalSubjects(localSubjectMarks);
 
-    }, [subjects, subjects_mark, cps]);
+        console.log("Subjects A:", subjectAMarks);
+        console.log("Subjects B:", subjectBMarks);
+        console.log("Local Subjects:", localSubjectMarks);
+        console.log("Subjects:", subjects);
+
+    }, [subjects, subjects_mark, cps, student_data]);
 
     return (
         <div className="max-w-4xl mx-auto p-6 text-sm font-sans text-black bg-white print:bg-white print:text-black"
@@ -128,7 +133,7 @@ const StudentReportCard = ({ student_data, report_data, school_profile, subjects
                 <div className="grid grid-cols-[auto_1ch_1fr] gap-x-3">
                     <span>Nama</span><span>:</span><span>{student_data.name}</span>
                     <span>NIS/NISN</span><span>:</span><span>{`${student_data.nis}/${student_data.nisn}`}</span>
-                    <span>Nama Sekolah</span><span>:</span><span>{school_profile.satuanPendidikan}</span>
+                    <span>Nama Sekolah</span><span>:</span><span>{school_profile.satuan_pendidikan}</span>
                     <span>Alamat</span><span>:</span>
                     <span>
                         {`${school_profile.alamat}, ${school_profile.desa}, ${school_profile.kecamatan}, ${school_profile.kabupaten}`}
@@ -341,7 +346,7 @@ export const StudentReportCardPage2 = ({ user, student_data, report_data, school
                 student_id: extra.student_id,
                 extra_name: extras.find(e => e.extra_id === extra.extra_id)?.name || '',
                 predicate: mapPredicate(extra.value),
-                desc: extra.desc,
+                desc: extra.description,
                 recommendation: extra.recommendation,
             }));
         setExtrasData(filteredExtras);
@@ -387,7 +392,7 @@ export const StudentReportCardPage2 = ({ user, student_data, report_data, school
                 <div className="grid grid-cols-[auto_1ch_1fr] gap-x-3">
                     <span>Nama</span><span>:</span><span>{student_data.name}</span>
                     <span>NIS/NISN</span><span>:</span><span>{`${student_data.nis}/${student_data.nisn}`}</span>
-                    <span>Nama Sekolah</span><span>:</span><span>{school_profile.satuanPendidikan}</span>
+                    <span>Nama Sekolah</span><span>:</span><span>{school_profile.satuan_pendidikan}</span>
                     <span>Alamat</span><span>:</span>
                     <span>
                         {`${school_profile.alamat}, ${school_profile.desa}, ${school_profile.kecamatan}, ${school_profile.kabupaten}`}
@@ -518,8 +523,8 @@ export const StudentReportCardPage2 = ({ user, student_data, report_data, school
                         <br />
 
                         <div className="mt-10">
-                            <p><strong>{school_profile.kepalaSekolah}</strong></p>
-                            <p>NIP. {school_profile.nipKepalaSekolah}</p>
+                            <p><strong>{school_profile.kepala_sekolah}</strong></p>
+                            <p>NIP. {school_profile.nip_kepala_sekolah}</p>
                         </div>
                     </div>
                 </div>

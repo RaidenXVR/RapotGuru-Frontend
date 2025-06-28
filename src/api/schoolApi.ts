@@ -3,10 +3,11 @@ import axios from 'axios';
 
 import type { School } from '../types/School';
 
+const BASE_URL: string = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
 
 export async function getSchoolList(): Promise<School[]> {
   try {
-    const response = await axios.get('/api/school-list');
+    const response = await axios.get(BASE_URL + '/api/school-list');
     const data = await response.data;
     return data;
   } catch (err) {
@@ -18,7 +19,7 @@ export async function getSchoolList(): Promise<School[]> {
 
 export async function getSchoolDataByUserId(user_id: string): Promise<School> {
   try {
-    const response = await axios.get(`/api/user/${user_id}/school-data`);
+    const response = await axios.get(`${BASE_URL}/api/user/${user_id}/school-data`);
     const data = await response.data;
     return data;
   } catch (err) {
@@ -30,7 +31,7 @@ export async function getSchoolDataByUserId(user_id: string): Promise<School> {
 export async function setUserSchool(id: String, npsn: String) {
 
   try {
-    const response = await axios.post(`/api/users/${id}/change-school`, { npsn: npsn });
+    const response = await axios.post(`${BASE_URL}/api/users/${id}/change-school`, { npsn: npsn });
     const data = await response.data;
     return data;
   } catch (err) {
@@ -52,10 +53,12 @@ export async function updateSchoolData(
   kodePos: string,
   website: string,
   email: string,
-  telp: string,) {
+  telp: string,
+  kepalaSekolah: string,
+  nipKepalaSekolah: string) {
 
   try {
-    const response = await axios.post(`/api/schools/${npsn}/update-school`,
+    const response = await axios.post(`${BASE_URL}/api/schools/${npsn}/update-school`,
       {
         dinasPendidikan: dinasPendidikan,
         satuanPendidikan: satuanPendidikan,
@@ -68,7 +71,9 @@ export async function updateSchoolData(
         kodePos: kodePos,
         website: website,
         email: email,
-        telp: telp
+        telp: telp,
+        kepalaSekolah: kepalaSekolah,
+        nipKepalaSekolah: nipKepalaSekolah
       })
 
     const status = await response.status;
@@ -94,23 +99,28 @@ export async function setSchoolData(
   kodePos: string,
   website: string,
   email: string,
-  telp: string) {
+  telp: string,
+  kepalaSekolah: string,
+  nipKepalaSekolah: string) {
 
   try {
-    const response = await axios.post(`/api/schools/add-school`,
+    const response = await axios.post(`${BASE_URL}/api/schools/add-school`,
       {
-        dinasPendidikan: dinasPendidikan,
-        satuanPendidikan: satuanPendidikan,
+        dinas_pendidikan: dinasPendidikan,
+        satuan_pendidikan: satuanPendidikan,
+        npsn: npsn,
         nss: nss,
         alamat: alamat,
         desa: desa,
         kecamatan: kecamatan,
         kabupaten: kabupaten,
         provinsi: provinsi,
-        kodePos: kodePos,
+        kode_pos: kodePos,
         website: website,
         email: email,
-        telp: telp
+        telp: telp,
+        kepala_sekolah: kepalaSekolah,
+        nip_kepala_sekolah: nipKepalaSekolah
       })
 
     const status = await response.status;

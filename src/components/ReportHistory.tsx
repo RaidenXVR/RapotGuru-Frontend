@@ -1,40 +1,24 @@
-import { useState } from "react";
+
+import React, { useEffect, useState } from 'react';
+import { useUser } from '../context/userContext';
+import { getReportsByUser } from '../api/reportApi';
+import type { ReportData } from '../types/Report';
+
 
 export default function ReportHistory() {
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedFilter, setSelectedFilter] = useState("all");
+    const { user } = useUser();
 
-    // Sample data - replace with actual data
-    const reportData = [
-        {
-            id: "R001A-20240503",
-            kelas: "1A",
-            fase: "A",
-            semester: "Ganjil",
-            tahun: "2024/2025",
-            titiMangsa: "2024-08-15",
-            status: "completed"
-        },
-        {
-            id: "R002B-20240404",
-            kelas: "1B",
-            fase: "A", 
-            semester: "Genap",
-            tahun: "2023/2024",
-            titiMangsa: "2024-03-20",
-            status: "completed"
-        },
-        {
-            id: "R003A-20240305",
-            kelas: "2A",
-            fase: "B",
-            semester: "Ganjil",
-            tahun: "2023/2024",
-            titiMangsa: "2023-12-15",
-            status: "draft"
+    const [reports, setReports] = useState<ReportData[]>([]);
+    useEffect(() => {
+        if (user) {
+            getReportsByUser(user.nip).then((data) => {
+                setReports(data);
+            })
         }
-    ];
-
+    }, []);
+    
     const filteredData = reportData.filter(report => 
         report.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
         report.kelas.toLowerCase().includes(searchTerm.toLowerCase())
@@ -57,62 +41,16 @@ export default function ReportHistory() {
         );
     };
 
-    return (
-        <div className="flex-1 m-2 sm:m-4 lg:m-6">
-            {/* Header Section */}
-            <div className="bg-white/90 backdrop-blur-sm rounded-t-2xl shadow-lg border border-white/50 p-4 sm:p-6">
-                <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center space-y-4 lg:space-y-0">
-                    {/* Title Section */}
-                    <div className="flex items-center space-x-3">
-                        <div className="p-2 bg-gradient-to-r from-purple-500 to-indigo-600 rounded-xl shadow-lg">
-                            <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                            </svg>
-                        </div>
-                        <div>
-                            <h2 className="text-xl font-semibold text-gray-900 flex items-center gap-2">
-                                <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" />
-                                </svg>
-                                Riwayat Rapor
-                            </h2>
-                            <p className="text-slate-500 text-sm sm:text-base">Kelola dan lihat riwayat rapor siswa</p>
-                        </div>
-                    </div>
 
-                    {/* Search and Filter Section */}
-                    <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3">
-                        {/* Filter Dropdown */}
-                        <select 
-                            value={selectedFilter}
-                            onChange={(e) => setSelectedFilter(e.target.value)}
-                            className="px-4 py-2 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 shadow-sm hover:shadow-md"
-                        >
-                            <option value="all">Semua Status</option>
-                            <option value="completed">Selesai</option>
-                            <option value="draft">Draft</option>
-                            <option value="pending">Pending</option>
-                        </select>
 
-                        {/* Search Input */}
-                        <div className="relative min-w-[250px]">
-                            <input
-                                type="text"
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                                className="w-full pl-4 pr-12 py-2 bg-white border border-slate-200 rounded-xl text-sm placeholder:text-slate-400 text-slate-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 shadow-sm hover:shadow-md"
-                                placeholder="Cari ID rapor atau kelas..."
-                            />
-                            <button className="absolute right-2 top-1/2 transform -translate-y-1/2 p-1.5 text-slate-400 hover:text-purple-600 transition-colors duration-300">
-                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
-                </div>
+    return (<div className="flex-1/2 m-4 object-top-left">
+        <div className="w-full flex justify-between items-center mb-3 mt-1 pl-3">
+            <div>
+                <h3 className="text-lg font-semibold text-slate-800">History Rapot</h3>
+                <p className="text-slate-500">Rapot-rapot terdahulu.</p>
             </div>
 
+        </div>
             {/* Stats Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 px-4 sm:px-6 py-4 bg-white/90 backdrop-blur-sm border-x border-white/50">
                 <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-4 rounded-xl border border-green-100">
@@ -170,11 +108,11 @@ export default function ReportHistory() {
                                     <div className="grid grid-cols-2 gap-3 text-sm">
                                         <div>
                                             <span className="text-slate-500">Kelas:</span>
-                                            <span className="ml-2 font-medium text-slate-700">{report.kelas}</span>
+                                            <span className="ml-2 font-medium text-slate-700">{report.class}</span>
                                         </div>
                                         <div>
                                             <span className="text-slate-500">Fase:</span>
-                                            <span className="ml-2 font-medium text-slate-700">{report.fase}</span>
+                                            <span className="ml-2 font-medium text-slate-700">{report.phase}</span>
                                         </div>
                                         <div>
                                             <span className="text-slate-500">Semester:</span>
@@ -182,12 +120,12 @@ export default function ReportHistory() {
                                         </div>
                                         <div>
                                             <span className="text-slate-500">Tahun:</span>
-                                            <span className="ml-2 font-medium text-slate-700">{report.tahun}</span>
+                                            <span className="ml-2 font-medium text-slate-700">{report.school_year}</span>
                                         </div>
                                     </div>
                                     <div className="mt-3 pt-3 border-t border-slate-200">
                                         <span className="text-slate-500 text-xs">Dibuat: </span>
-                                        <span className="font-medium text-slate-700 text-xs">{report.titiMangsa}</span>
+                                        <span className="font-medium text-slate-700 text-xs">{report.deadline}</span>
                                     </div>
                                 </div>
                             ))}
@@ -236,27 +174,27 @@ export default function ReportHistory() {
                                     <tr key={index} className="hover:bg-gradient-to-r hover:from-purple-50 hover:to-indigo-50 transition-all duration-300 group">
                                         <td className="p-4 border-b border-slate-100">
                                             <div className="font-semibold text-slate-800 group-hover:text-purple-700 transition-colors duration-300">
-                                                {report.id}
+                                                {report.report_id}
                                             </div>
                                         </td>
                                         <td className="p-4 border-b border-slate-100">
                                             <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded-lg text-sm font-medium">
-                                                {report.kelas}
+                                                {report.class}
                                             </span>
                                         </td>
                                         <td className="p-4 border-b border-slate-100">
                                             <span className="px-2 py-1 bg-indigo-100 text-indigo-800 rounded-lg text-sm font-medium">
-                                                Fase {report.fase}
+                                                Fase {report.phase}
                                             </span>
                                         </td>
                                         <td className="p-4 border-b border-slate-100 text-slate-600">
                                             {report.semester}
                                         </td>
                                         <td className="p-4 border-b border-slate-100 text-slate-600">
-                                            {report.tahun}
+                                            {report.school_year}
                                         </td>
                                         <td className="p-4 border-b border-slate-100 text-slate-600">
-                                            {report.titiMangsa}
+                                            {report.deadline}
                                         </td>
                                         <td className="p-4 border-b border-slate-100">
                                             {getStatusBadge(report.status)}

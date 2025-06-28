@@ -11,6 +11,7 @@ import type { CPMark, OtherMark, SubjectMarks } from "../types/MarkTypes";
 import ConfirmDialog from "./ConfirmDialog";
 import { BellAlertIcon, CheckCircleIcon } from "@heroicons/react/24/solid";
 import { ExclamationCircleIcon } from "@heroicons/react/24/outline";
+import { v4 as uuidv4 } from 'uuid';
 
 
 const colDefinitions: (ColHeaderProps | ColHeaderGroupProps)[] = [
@@ -117,49 +118,45 @@ export default function SubjectMarksEdit() {
                     setCPs(prev => ({ ...prev, ...thisCps }));
 
                     // For each subject, fetch all marks (CP and Other)
-                    // You may need to adjust this API to fetch all marks for a subject
                     getSubjectMarksBySubjectIds(sub_ids).then((thisMarks) => {
                         setMarks(thisMarks);
-                        // console.log(thisMarks, 'subject marks');
                         const subjectMarks: { [subject_id: string]: SubjectMarksTableTypes[] } = {};
 
-                        thisMarks.forEach((sm) => {
-                            const subject_id = sm.subject_id;
-                            if (!subjectMarks[subject_id]) {
-                                subjectMarks[subject_id] = [];
+                        thisSubject.forEach(subject => {
+                            const subject_id = subject.subject_id;
+                            // Create a base row for every student for this subject
+                            const studentRows: SubjectMarksTableTypes[] = thisStudents.map(st => ({
+                                student_id: st.student_id!,
+                                name: st.name
+                            }));
+
+                            // Find the marks for this subject from the fetched marks
+                            const marksForSubject = thisMarks.find(m => m.subject_id === subject_id);
+
+                            if (marksForSubject) {
+                                // Populate the rows with existing marks and their IDs
+                                studentRows.forEach(row => {
+                                    marksForSubject.cp_marks
+                                        .filter(m => m.student_id === row.student_id)
+                                        .forEach(cpMark => {
+                                            const fieldName = cpMark.cp_num.replace(/(\d+)\.(\d+)/, 'cp_$1_$2');
+                                            row[fieldName] = cpMark.value;
+                                            row[`${fieldName}_id`] = (cpMark as any).mark_id;
+                                        });
+                                    marksForSubject.other_marks
+                                        .filter(m => m.student_id === row.student_id)
+                                        .forEach(otherMark => {
+                                            row[otherMark.type] = otherMark.value;
+                                            row[`${otherMark.type}_id`] = (otherMark as any).mark_id;
+                                        });
+                                });
                             }
-                            sm.cp_marks.forEach((cpMark) => {
-                                const existingRow = subjectMarks[subject_id].find(row => row.student_id === cpMark.student_id);
-                                if (existingRow) {
-                                    existingRow[`${cpMark.cp_num.replace(/(\d+)\.(\d+)/, 'cp_$1_$2')}`] = cpMark.value;
-                                } else {
-                                    const newRow: SubjectMarksTableTypes = {
-                                        student_id: cpMark.student_id,
-                                        name: thisStudents.find(st => st.student_id === cpMark.student_id)?.name || '',
-                                        [`${cpMark.cp_num.replace(/(\d+)\.(\d+)/, 'cp_$1_$2')}`]: cpMark.value
-                                    };
-                                    subjectMarks[subject_id].push(newRow);
-                                }
-                            });
-                            sm.other_marks.forEach((otherMark) => {
-                                const existingRow = subjectMarks[subject_id].find(row => row.student_id === otherMark.student_id);
-                                if (existingRow) {
-                                    existingRow[otherMark.type] = otherMark.value;
-                                } else {
-                                    const newRow: SubjectMarksTableTypes = {
-                                        student_id: otherMark.student_id,
-                                        name: thisStudents.find(st => st.student_id === otherMark.student_id)?.name || '',
-                                        [otherMark.type]: otherMark.value
-                                    };
-                                    subjectMarks[subject_id].push(newRow);
-                                }
-                            });
+                            subjectMarks[subject_id] = studentRows;
                         });
-                        // console.log(subjectMarks, 'subject marks by subject id');
+
                         setSavedData(subjectMarks);
                         setChangedData(subjectMarks);
-
-                    })
+                    });
 
                     const s: SubjectMarksTableTypes[] = thisStudents.map((st) => {
                         return { student_id: st.student_id!, name: st.name };
@@ -185,7 +182,7 @@ export default function SubjectMarksEdit() {
         setColDefs(newColDefs);
 
         const subjectMarks: SubjectMarksTableTypes[] = changedData[subject_id]
-        if (subjectMarks && subjectMarks.length == 0) {
+        if (!subjectMarks || subjectMarks.length == 0) {
             const initRows: SubjectMarksTableTypes[] = students.map((st) => {
                 return { student_id: st.student_id!, name: st.name };
             })
@@ -209,92 +206,124 @@ export default function SubjectMarksEdit() {
 
     const handleTableChange = (updatedData: (CPTableType | ExtraTableType | ExtraMarkTableType | StudentTableType | SubjectMarksTableTypes)[], isDelete: boolean) => {
         if (currentSubject) {
-            setChangedData(prev => ({ ...prev, [currentSubject]: updatedData as SubjectMarksTableTypes[] }));
+            setChangedData(prev => {
+                const oldData = prev[currentSubject] || [];
+                const newData = (updatedData as SubjectMarksTableTypes[]).map(newRow => {
+                    const oldRow = oldData.find(o => o.student_id === newRow.student_id);
+                    if (oldRow) {
+                        return { ...oldRow, ...newRow };
+                    }
+                    return newRow;
+                });
+                return { ...prev, [currentSubject]: newData };
+            });
         }
     };
 
+
     const handleSaveChanges = () => {
-        const subjectIds = Object.keys(changedData);
-        const subjectMarksToSave: SubjectMarks[] = marks;
-        const studentsIds = students.map(st => st.student_id!);
+        // Create a deep copy to modify, so we don't mutate state directly before calling setState
+        const newChangedData = JSON.parse(JSON.stringify(changedData));
+        const allMarksToSave: SubjectMarks[] = [];
 
-        subjectIds.forEach((subject_id) => {
-            const subjectData = changedData[subject_id] || [];
-            const cpMarks: CPMark[] = [];
-            const otherMarks: OtherMark[] = [];
+        Object.keys(newChangedData).forEach((subject_id) => {
+            const subjectData = newChangedData[subject_id] || [];
+            const originalSubjectData = savedData[subject_id] || [];
 
-            subjectData.forEach((row) => {
-                const studentId = row.student_id;
-                if (studentId && studentsIds.includes(studentId)) {
-                    // Collect CP marks
-                    Object.keys(row).forEach((key) => {
-                        if (key.startsWith('cp_')) {
-                            const cpNum = key.replace('cp_', '').replace('_', '.');
-                            cpMarks.push({
-                                value: Number(row[key]),
-                                cp_id: `${cps[subject_id]?.find(c => c.cp_num === cpNum)?.cp_id}`,
-                                cp_num: cpNum,
-                                student_id: studentId,
-                                subject_id
-                            });
-                        } else if (key === 'test' || key === 'non_test') {
-                            // Collect other marks
-                            otherMarks.push({
-                                type: key as 'test' | 'non_test',
-                                value: Number(row[key]),
-                                student_id: studentId,
-                                subject_id
-                            });
-                        }
-                    });
-                }
-            });
-
-            // Find existing SubjectMarks or create a new one
-            let existingSubjectMarks = subjectMarksToSave.find(sm => sm.subject_id === subject_id);
-            if (!existingSubjectMarks) {
-                existingSubjectMarks = { subject_id, student_id: '', cp_marks: [], other_marks: [] };
-                subjectMarksToSave.push(existingSubjectMarks);
+            // Skip subjects that haven't changed
+            if (JSON.stringify(subjectData) === JSON.stringify(originalSubjectData)) {
+                return;
             }
 
-            existingSubjectMarks.cp_marks = cpMarks;
-            existingSubjectMarks.other_marks = otherMarks;
+            const cpMarks: (CPMark & { mark_id: string })[] = [];
+            const otherMarks: (OtherMark & { mark_id: string })[] = [];
+
+            subjectData.forEach((row: SubjectMarksTableTypes) => {
+                const studentId = row.student_id;
+                if (!studentId) return;
+
+                // Process CP marks
+                const subjectCps = cps[subject_id] || [];
+                subjectCps.forEach(cp => {
+                    const fieldName = cp.cp_num.replace(/(\d+)\.(\d+)/, 'cp_$1_$2');
+                    const idFieldName = `${fieldName}_id`;
+                    const value = row[fieldName];
+
+                    if (value !== null && value !== undefined && value.toString().trim() !== '') {
+                        if (!row[idFieldName]) {
+                            row[idFieldName] = uuidv4(); // Assign new ID in the copied data
+                        }
+                        cpMarks.push({
+                            mark_id: row[idFieldName] as string,
+                            value: Number(value),
+                            cp_id: cp.cp_id!,
+                            cp_num: cp.cp_num,
+                            student_id: studentId,
+                            subject_id: subject_id
+                        });
+                    }
+                });
+
+                // Process other marks
+                (['test', 'non_test'] as const).forEach(type => {
+                    const idFieldName = `${type}_id`;
+                    const value = row[type];
+
+                    if (value !== null && value !== undefined && value.toString().trim() !== '') {
+                        if (!row[idFieldName]) {
+                            row[idFieldName] = uuidv4(); // Assign new ID
+                        }
+                        otherMarks.push({
+                            mark_id: row[idFieldName] as string,
+                            type: type,
+                            value: Number(value),
+                            student_id: studentId,
+                            subject_id: subject_id
+                        });
+                    }
+                });
+            });
+
+            allMarksToSave.push({
+                subject_id: subject_id,
+                student_id: '', // Keep for consistency
+                cp_marks: cpMarks,
+                other_marks: otherMarks
+            });
         });
 
-        setSubjectMarks(subjectMarksToSave).then((status) => {
+        if (allMarksToSave.length === 0) {
+            setOpenSaveAlert(true);
+            setAlertMessage("Tidak ada perubahan untuk disimpan.");
+            setAlertType('success');
+            setTimeout(() => setOpenSaveAlert(false), 2000);
+            return;
+        }
+
+        // Update the component's state with the data that includes new IDs
+        setChangedData(newChangedData);
+
+        setSubjectMarks(allMarksToSave).then((status) => {
             if (status) {
-                console.log("Subject marks saved successfully");
                 setOpenSaveAlert(true);
                 setAlertMessage("Perubahan berhasil disimpan!");
                 setAlertType('success');
-                setTimeout(() => {
-                    setOpenSaveAlert(false);
-                }, 2000);
-
-                setSavedData(changedData); // Update saved data with changed data
-                console.log(subjectMarksToSave, 'subject marks to save');
+                setTimeout(() => setOpenSaveAlert(false), 2000);
+                setSavedData(newChangedData);
             } else {
-                console.error("Failed to save subject marks");
                 setOpenSaveAlert(true);
                 setAlertMessage("Gagal menyimpan perubahan!");
                 setAlertType('error');
-                setTimeout(() => {
-                    setOpenSaveAlert(false);
-                }, 2000);
+                setTimeout(() => setOpenSaveAlert(false), 2000);
             }
         }).catch((error) => {
             console.error("Error saving subject marks:", error);
             setOpenSaveAlert(true);
             setAlertMessage("Terjadi kesalahan saat menyimpan perubahan!");
             setAlertType('error');
-            setTimeout(() => {
-                setOpenSaveAlert(false);
-            }, 2000);
-
+            setTimeout(() => setOpenSaveAlert(false), 2000);
         });
-
     }
-
     const handleBack = () => {
         if (JSON.stringify(changedData) !== JSON.stringify(savedData)) {
             setOpenDialog(true);

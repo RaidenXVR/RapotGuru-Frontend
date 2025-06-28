@@ -1,6 +1,6 @@
 export type School = {
-  dinasPendidikan: string;
-  satuanPendidikan: string;
+  dinas_pendidikan: string;
+  satuan_pendidikan: string;
   npsn: string;
   nss: string;
   alamat: string;
@@ -8,10 +8,10 @@ export type School = {
   kecamatan: string;
   kabupaten: string;
   provinsi: string;
-  kodePos: string;
+  kode_pos: string;
   website: string;
   email: string;
   telp: string;
-  kepalaSekolah: string;
-  nipKepalaSekolah: string;
+  kepala_sekolah: string;
+  nip_kepala_sekolah: string;
 };

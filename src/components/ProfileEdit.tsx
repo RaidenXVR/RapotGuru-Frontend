@@ -53,7 +53,7 @@ export default function ProfileEdit() {
         setLoading(true);
 
         Promise.all([
-            getUserData('123456789'),
+            getUserData(user!.nip),
             getSchoolList()
         ])
             .then(([userData, schoolData]) => {
@@ -92,6 +92,19 @@ export default function ProfileEdit() {
                                 border-0">
                     <h1>Edit Profil Guru</h1>
                 </Button>
+        
+                    <Button
+                        variant="ghost"
+                        onClick={() => {
+                            localStorage.removeItem("user");
+                            navigate("/login");
+                            setUser(null);
+                        }}
+                        className="flex top-0 right-0 ml-3 object-right p-3 bg-red-500"
+                    >
+                        Logout
+                    </Button>
+
             </div>
             <SchoolProfile />
             <div className="m-3 flex w-full">
@@ -185,7 +198,7 @@ export default function ProfileEdit() {
                                         <p className="block font-semibold text-sm text-slate-800">{school.npsn}</p>
                                     </td>
                                     <td className="p-4 border-b border-slate-200 py-5">
-                                        <p className="text-sm text-slate-500">{school.satuanPendidikan}</p>
+                                        <p className="text-sm text-slate-500">{school.satuan_pendidikan}</p>
                                     </td>
                                     <td className="p-4 border-b border-slate-200 py-5">
                                         <p className="text-sm text-slate-500">{school.kecamatan}</p>
@@ -194,7 +207,7 @@ export default function ProfileEdit() {
                                         <p className="text-sm text-slate-500">{school.provinsi}</p>
                                     </td>
                                     <td className="p-4 border-b border-slate-200 py-5">
-                                        <p className="text-sm text-slate-500">{school.dinasPendidikan}</p>
+                                        <p className="text-sm text-slate-500">{school.dinas_pendidikan}</p>
                                     </td>
 
                                     <td className="p-4 border-b border-slate-200 py-5">

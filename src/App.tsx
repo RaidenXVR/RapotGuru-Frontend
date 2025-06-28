@@ -2,7 +2,7 @@ import Sidebar from './components/Sidebar';
 import SchoolProfile from './components/SchoolProfile';
 import './index.css';
 import TeacherProfile from './components/TeacherProfile';
-import { Outlet, Route, Routes } from 'react-router-dom'
+import { Navigate, Outlet, Route, Routes, useLocation } from 'react-router-dom'
 import ReportCards from './components/ReportCards';
 import ReportHistory from './components/ReportHistory';
 import ProfileEdit from './components/ProfileEdit';
@@ -20,31 +20,52 @@ import SubjectMarksEdit from './components/SubjectMarksEdit';
 import NotesEdit from './components/NotesEdit';
 import ReportEdit from './components/ReportEdit';
 import CardPreviewPage from './components/CardPreviewPage';
+import Login from './components/Login';
+import RegisterPage from './components/Register';
 
 export default function App() {
-  const { setUser } = useUser();
+  const { user, setUser } = useUser();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const location = useLocation();
 
   useEffect(() => {
-    getUserData('123456789')
-      .then((data) => {
-        console.log(data)
-        setUser(data);
-        setLoading(false);
-      })
-      .catch((err) => {
+    const fetchUserData = async () => {
+      try {
+        const userData = localStorage.getItem('user');
+        if (userData) {
+          const parsedUser = JSON.parse(userData);
+          setUser(parsedUser);
+          const data = await getUserData(parsedUser.nip);
+          setUser(data);
+        }
+      } catch (err) {
         console.error(err);
-        setError('Failed to load schools');
+        setError('Failed to fetch user data');
+      } finally {
         setLoading(false);
-      });
-  }, []);
+      }
+    };
+
+    fetchUserData();
+  }, [setUser]);
+
+  useEffect(() => {
+    if (location.pathname === '/login') {
+      setLoading(false);
+      return;
+    }
+  }, [location.pathname]);
 
 
   if (loading) return <div>Fetching user data...</div>;
   if (error) return <div>{error}</div>;
 
-
+  if (!user &&
+    location.pathname !== '/login' &&
+    location.pathname !== '/register') {
+    return <Navigate to="/login" replace />;
+  }
   return (
     <div className='flex h-screen w-screen'>
       <Sidebar />
@@ -70,6 +91,12 @@ export default function App() {
                   <ReportHistory />
                 </div>
               }
+            />
+            <Route path='login'
+              element={user ? <Navigate to="/" replace /> : <Login />}
+            />
+            <Route path='register'
+              element={<RegisterPage />}
             />
             <Route path="profile" element={<Outlet />}>
               <Route index element={<ProfileEdit />} />

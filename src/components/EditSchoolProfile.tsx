@@ -45,21 +45,21 @@ export default function EditSchoolProfile() {
 
     useEffect(() => {
         if (oldProfile) {
-            setDisPen(oldProfile.dinasPendidikan);
-            setNpsn(oldProfile.npsn);
-            setNss(oldProfile.nss);
-            setAddress(oldProfile.alamat);
-            setSatPen(oldProfile.satuanPendidikan);
-            setVillage(oldProfile.desa);
-            setSubDis(oldProfile.kecamatan);
-            setRegen(oldProfile.kabupaten);
-            setProv(oldProfile.provinsi);
-            setPostCode(oldProfile.kodePos);
-            setWeb(oldProfile.website);
-            setEmail(oldProfile.email);
-            setTelp(oldProfile.telp);
-            setHeadmaster(oldProfile.kepalaSekolah || "");
-            setNipHeadmaster(oldProfile.nipKepalaSekolah || "");
+            setDisPen(oldProfile.dinas_pendidikan || "");
+            setNpsn(oldProfile.npsn || "");
+            setNss(oldProfile.nss || "");
+            setAddress(oldProfile.alamat || "");
+            setSatPen(oldProfile.satuan_pendidikan || "");
+            setVillage(oldProfile.desa || "");
+            setSubDis(oldProfile.kecamatan || "");
+            setRegen(oldProfile.kabupaten || "");
+            setProv(oldProfile.provinsi || "");
+            setPostCode(oldProfile.kode_pos || "");
+            setWeb(oldProfile.website || "");
+            setEmail(oldProfile.email || "");
+            setTelp(oldProfile.telp || "");
+            setHeadmaster(oldProfile.kepala_sekolah || "");
+            setNipHeadmaster(oldProfile.nip_kepala_sekolah || "");
         }
     }, [oldProfile]);
 
@@ -80,14 +80,14 @@ export default function EditSchoolProfile() {
 
     const onChangesSaved = () => {
         if (isEditMode) {
-            updateSchoolData(disPen, satPen, npsn, nss, address, village, subDis, regen, prov, postCode, web, email, telp)
+            updateSchoolData(disPen, satPen, npsn, nss, address, village, subDis, regen, prov, postCode, web, email, telp, headmaster, nipHeadmaster)
                 .then((con) => {
                     if (con) navigate("/profile")
 
                 })
         }
         else {
-            setSchoolData(disPen, satPen, npsn, nss, address, village, subDis, regen, prov, postCode, web, email, telp)
+            setSchoolData(disPen, satPen, npsn, nss, address, village, subDis, regen, prov, postCode, web, email, telp, headmaster, nipHeadmaster)
                 .then((con) => {
                     if (con) navigate("/profile")
                 })
@@ -226,8 +226,8 @@ export default function EditSchoolProfile() {
                                     </td>
                                     <td className="p-4">
                                         <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
-                                            <Input className="rounded-lg p-2" onChange={(e) => setSubDis(e.target.value)}
-                                                value={subDis} />
+                                            <Input className="rounded-lg p-2" onChange={(e) => setVillage(e.target.value)}
+                                                value={village} />
                                         </p>
                                     </td>
                                 </tr>

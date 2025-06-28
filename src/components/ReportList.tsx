@@ -28,7 +28,6 @@ export default function ReportList() {
             setLoading(false);
         });
     }, []);
-
     // Filter reports based on search term
     useEffect(() => {
         const filtered = reports.filter(report =>
@@ -80,7 +79,6 @@ export default function ReportList() {
             </div>
         );
     }
-
     return (
         <div className="space-y-6">
             {/* Search and Filter Section */}

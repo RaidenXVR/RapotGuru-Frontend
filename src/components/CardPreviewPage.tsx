@@ -157,20 +157,42 @@ export default function CardPreviewPage() {
     }, [currentStudentIndex, studentData]);
 
     useEffect(() => {
-        // Gabungkan semua promise ke dalam Promise.all untuk efisiensi
-        Promise.all([
-            getReportById(report_id!),
-            getSchoolDataByUserId("123456789"), // Pastikan user.id tersedia jika ingin dinamis
-            getSubjectsByReport(report_id!),
-            getExtrasByReport(report_id!),
-            getNotesAttendanceByReport(report_id!),
-            getStudentsByReport(report_id!)
-        ]).then(async ([reportDataRes, schoolDataRes, subjectsRes, extrasRes, notesAttendanceRes, studentsDataRes]) => {
-            setReportData(reportDataRes);
-            setSchoolProfile(schoolDataRes);
-            setNotesAttendance(notesAttendanceRes);
-            setStudentData(studentsDataRes);
-            setCurrentStudent(studentsDataRes[0]);
+        getReportById(report_id!).then((data) => {
+            setReportData(data);
+        })
+
+        getSchoolDataByUserId(user!.nip).then((data) => {
+            setSchoolProfile(data);
+        })
+        getSubjectsByReport(report_id!).then((data) => {
+            if (data) {
+                setSubjects(data);
+                const subjectIds = data.map(subject => subject.subject_id);
+                getSubjectMarksBySubjectIds(subjectIds).then((marks) => {
+                    setSubjectsMark(marks);
+                })
+
+                getCPsBySubjectIDs(subjectIds).then((cps) => {
+                    setCPs(cps);
+                })
+            }
+        })
+        getExtrasByReport(report_id!).then((data) => {
+            if (data) {
+                setExtras(data);
+                const extraIds = data.map(extra => extra.extra_id);
+                getExtraMarksByExtraIds(extraIds).then((marks) => {
+                    setExtrasMark(marks);
+                })
+            }
+        })
+        getNotesAttendanceByReport(report_id!).then((data) => {
+            setNotesAttendance(data);
+        })
+        getStudentsByReport(report_id!).then((data) => {
+            console.log(data, "student data")
+            setStudentData(data);
+            setCurrentStudent(data[0]);
             setCurrentStudentIndex(0);
 
             if (subjectsRes) {

@@ -10,30 +10,7 @@ export default function TeacherProfile() {
     const teacherFields = [
         { label: "NIP", value: user?.nip, icon: "🆔", key: "nip" },
         { label: "Nama Lengkap", value: user?.name, icon: "👨‍🏫", key: "name" },
-        { label: "Email", value: user?.email, icon: "📧", key: "email", isEmail: true },
-        { label: "No. Telepon", value: user?.phone || "Belum diatur", icon: "📞", key: "phone" },
-        { label: "Mata Pelajaran", value: user?.subject || "Belum diatur", icon: "📚", key: "subject" },
-        { label: "Jabatan", value: user?.position || "Guru", icon: "👔", key: "position" },
-        { label: "Status", value: user?.status || "Aktif", icon: "✅", key: "status" },
-        { label: "Bergabung Sejak", value: user?.joinDate || "Belum diatur", icon: "📅", key: "joinDate" }
     ];
-
-    const getStatusBadge = (status: string) => {
-        const statusConfig = {
-            "Aktif": { bg: "bg-green-100", text: "text-green-800", icon: "✅" },
-            "Tidak Aktif": { bg: "bg-red-100", text: "text-red-800", icon: "❌" },
-            "Cuti": { bg: "bg-yellow-100", text: "text-yellow-800", icon: "⏳" }
-        };
-        
-        const config = statusConfig[status as keyof typeof statusConfig] || statusConfig["Aktif"];
-        
-        return (
-            <span className={`inline-flex items-center space-x-1 px-3 py-1 rounded-full text-sm font-medium ${config.bg} ${config.text}`}>
-                <span>{config.icon}</span>
-                <span>{status}</span>
-            </span>
-        );
-    };
 
     return (
         <div className="flex-1 m-2 sm:m-4 lg:m-6">

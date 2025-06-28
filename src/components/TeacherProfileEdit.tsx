@@ -1,6 +1,6 @@
 import { Button, Card, Input, Typography } from "@material-tailwind/react";
 import { useUser } from "../context/userContext";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { setUserData } from "../api/userApi";
 
@@ -20,6 +20,11 @@ export default function TeacherProfileEdit() {
             setError(true)
         })
     }
+
+    useEffect(() => {
+        setNip(user!.nip);
+        setName(user!.name);
+    }, [])
     return (
         <div className="flex-1/2  m-4 object-top-right">
             <Typography className="justify-center align-middle">
@@ -38,8 +43,8 @@ export default function TeacherProfileEdit() {
                                 </p>
                             </td>
                             <td className="p-4">
-                                <Input className="rounded-lg p-2"  onChange={(e) => setNip(e.target.value)}
-                                    value={user?.nip} />
+                                <Input className="rounded-lg p-2" onChange={(e) => setNip(e.target.value)}
+                                    value={nip} />
                             </td>
                         </tr>
                         <tr className="even:bg-blue-gray-50/50">
@@ -49,8 +54,8 @@ export default function TeacherProfileEdit() {
                                 </p>
                             </td>
                             <td className="p-4">
-                                <Input className="rounded-lg p-2"  onChange={(e) => setName(e.target.value)}
-                                    value={user?.name} />
+                                <Input className="rounded-lg p-2" onChange={(e) => setName(e.target.value)}
+                                    value={name} readOnly={false} />
 
                             </td>
                         </tr>

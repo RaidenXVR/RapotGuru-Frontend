@@ -1,10 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import SpreadsheetTable, { type ColHeaderProps, type TableGridRef } from "./SpreadsheetTable"
 import { type Student } from "../types/Student";
-import { Button, Input } from "@material-tailwind/react";
+import { Alert, Button, Input } from "@material-tailwind/react";
 import { getStudentsByReport, setStudentData } from "../api/reportApi";
 import { useLocation, useNavigate } from "react-router-dom";
 import type { CPTableType, ExtraMarkTableType, ExtraTableType, StudentTableType } from "../types/TableTypes";
+import { CheckCircleIcon, ExclamationCircleIcon } from "@heroicons/react/16/solid";
+import ConfirmDialog from "./ConfirmDialog";
 
 const studentColHeaders: ColHeaderProps[] = [
     { field: 'name', headerName: 'Nama Siswa', freeze: true, editable: true, width: 200, centerHeader: true, dataType: 'text' },
@@ -37,9 +39,12 @@ export default function StudentsEdit() {
     const [isSaving, setIsSaving] = useState(false);
     const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
     const [successMessage, setSuccessMessage] = useState<string>('');
-    const [errorMessage, setErrorMessage] = useState<string>('');
-    
-    const isInitState = useRef(true);
+    const [errorMessage, setErrorMessage] = useState<string>('');    
+    const [openDialog, setOpenDialog] = useState(false);
+    const [openSaveAlert, setOpenSaveAlert] = useState(false);
+    const [alertMessage, setAlertMessage] = useState<string>('');
+    const [alertType, setAlertType] = useState<'success' | 'error'>('success');
+    const isInitState = useRef(true)
     const tableRef = useRef<TableGridRef>(null);
     const location = useLocation();
     const report_id = location.state.report_id;
@@ -92,18 +97,30 @@ export default function StudentsEdit() {
             const result = await setStudentData(initRows as Student[], report_id);
             if (result) {
                 setSavedTableStudents(initRows);
-                setHasUnsavedChanges(false);
-                setSuccessMessage('Data siswa berhasil disimpan!');
-            } else {
-                setErrorMessage('Gagal menyimpan data. Silakan coba lagi.');
+                setAlertMessage('Data siswa berhasil disimpan!');
+                setAlertType('success');
+                setOpenSaveAlert(true);
+                setTimeout(() => {
+                    setOpenSaveAlert(false);
+                }, 3000);
             }
-        } catch (err) {
-            console.error('Save error:', err);
-            setErrorMessage('Terjadi kesalahan saat menyimpan data.');
-        } finally {
-            setIsSaving(false);
-        }
-    };
+            else {
+                setAlertMessage('Gagal menyimpan data siswa!');
+                setAlertType('error');
+                setOpenSaveAlert(true);
+                setTimeout(() => {
+                    setOpenSaveAlert(false);
+                }, 3000);
+            }
+        }).catch((err) => {
+            console.log(err);
+            setAlertMessage('Terjadi kesalahan saat menyimpan data siswa!');
+            setAlertType('error');
+            setOpenSaveAlert(true);
+            setTimeout(() => {
+                setOpenSaveAlert(false);
+            }, 3000);
+        })
 
     const handleBack = () => {
         if (hasUnsavedChanges) {
