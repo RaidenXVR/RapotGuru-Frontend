@@ -91,7 +91,7 @@ export const SpreadsheetTable = forwardRef<TableGridRef, SheetProps>(({ columnHe
     };
 
     const [colDefs, setColDefs] = useState<ColDef[]>(generateColDefs(columnHeaders));
-    const [gridApi, setGridApi] = useState<GridApi | null>(null);
+    const [_gridApi, setGridApi] = useState<GridApi | null>(null);
 
     useEffect(() => {
         setColDefs(generateColDefs(columnHeaders));

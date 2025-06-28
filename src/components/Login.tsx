@@ -1,4 +1,4 @@
-import { Card, Input, Button, Typography } from "@material-tailwind/react";
+import { Card, Input, Button } from "@material-tailwind/react";
 import logo from '../assets/logo.png';
 import { useUser } from '../context/userContext';
 import { useState } from 'react';
@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 
 export default function LoginPage() {
 
-    const { user, setUser } = useUser();
+    const { setUser } = useUser();
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const navigate = useNavigate();

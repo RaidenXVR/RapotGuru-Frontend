@@ -130,7 +130,7 @@ export default function ExtrasEdit() {
         });
     };
 
-    const handleMarkTableChange = (updatedData: (CPTableType | ExtraTableType | ExtraMarkTableType)[], isDelete: boolean) => {
+    const handleMarkTableChange = (updatedData: (CPTableType | ExtraTableType | ExtraMarkTableType)[], _isDelete: boolean) => {
         const selEx: string = selectedExtra!
         // console.log(selEx);
         const newMarks = marks

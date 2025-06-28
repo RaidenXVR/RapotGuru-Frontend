@@ -1,12 +1,12 @@
 import { ArrowLeftCircleIcon, ArrowRightCircleIcon } from "@heroicons/react/24/solid";
 import { Button, Card, IconButton } from "@material-tailwind/react";
-import React, { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import StudentReportCard, { StudentReportCardPage2 } from "./StudentReportCard";
 import type { Student } from "../types/Student";
 import type { NotesAttendance } from "../types/NotesAttendance";
 import type { ExtraMark, SubjectMarks } from "../types/MarkTypes";
 import type { School } from "../types/School";
-import { useLocation, useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import type { ReportData } from "../types/Report";
 import { getCPsBySubjectIDs, getExtraMarksByExtraIds, getExtrasByReport, getNotesAttendanceByReport, getReportById, getStudentsByReport, getSubjectMarksBySubjectIds, getSubjectsByReport } from "../api/reportApi";
 import { getSchoolDataByUserId } from "../api/schoolApi";
@@ -18,7 +18,6 @@ import html2canvas from "html2canvas-pro";
 import jsPDF from "jspdf";
 
 export default function CardPreviewPage() {
-    const location = useLocation();
     const navigate = useNavigate();
     const { report_id } = useParams();
     const [reportData, setReportData] = useState<ReportData>()

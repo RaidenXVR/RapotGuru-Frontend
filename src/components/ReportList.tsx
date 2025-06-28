@@ -1,5 +1,4 @@
-import { PencilIcon, PencilSquareIcon, PrinterIcon } from "@heroicons/react/16/solid";
-import { IconButton } from "@material-tailwind/react";
+import { PencilSquareIcon, PrinterIcon } from "@heroicons/react/16/solid";
 import { useEffect, useState } from "react";
 import type { ReportData } from "../types/Report";
 import { useNavigate } from "react-router-dom";
@@ -39,19 +38,6 @@ export default function ReportList() {
         setFilteredReports(filtered);
     }, [searchTerm, reports]);
 
-    const getStatusBadge = (deadline: string) => {
-        const now = new Date();
-        const deadlineDate = new Date(deadline);
-        const daysLeft = Math.ceil((deadlineDate.getTime() - now.getTime()) / (1000 * 3600 * 24));
-
-        if (daysLeft < 0) {
-            return <span className="px-3 py-1 text-xs font-semibold bg-red-100 text-red-800 rounded-full">Terlambat</span>;
-        } else if (daysLeft <= 7) {
-            return <span className="px-3 py-1 text-xs font-semibold bg-yellow-100 text-yellow-800 rounded-full">Segera</span>;
-        } else {
-            return <span className="px-3 py-1 text-xs font-semibold bg-green-100 text-green-800 rounded-full">Normal</span>;
-        }
-    };
 
     if (loading) {
         return (

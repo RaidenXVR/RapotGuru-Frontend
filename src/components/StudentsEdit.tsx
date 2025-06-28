@@ -1,12 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import SpreadsheetTable, { type ColHeaderProps, type TableGridRef } from "./SpreadsheetTable"
 import { type Student } from "../types/Student";
-import { Alert, Button, Input } from "@material-tailwind/react";
+import { Button } from "@material-tailwind/react";
 import { getStudentsByReport, setStudentData } from "../api/reportApi";
 import { useLocation, useNavigate } from "react-router-dom";
 import type { CPTableType, ExtraMarkTableType, ExtraTableType, StudentTableType } from "../types/TableTypes";
-import { CheckCircleIcon, ExclamationCircleIcon } from "@heroicons/react/16/solid";
-import ConfirmDialog from "./ConfirmDialog";
 
 const studentColHeaders: ColHeaderProps[] = [
     { field: 'name', headerName: 'Nama Siswa', freeze: true, editable: true, width: 200, centerHeader: true, dataType: 'text' },
@@ -34,16 +32,15 @@ const studentColHeaders: ColHeaderProps[] = [
 
 export default function StudentsEdit() {
     const [initRows, setInitRows] = useState<StudentTableType[]>([]);
-    const [savedTableStudents, setSavedTableStudents] = useState<StudentTableType[]>(initRows);
+    const [_savedTableStudents, setSavedTableStudents] = useState<StudentTableType[]>(initRows);
     const [isLoading, setIsLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
     const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
     const [successMessage, setSuccessMessage] = useState<string>('');
     const [errorMessage, setErrorMessage] = useState<string>('');
-    const [openDialog, setOpenDialog] = useState(false);
-    const [openSaveAlert, setOpenSaveAlert] = useState(false);
-    const [alertMessage, setAlertMessage] = useState<string>('');
-    const [alertType, setAlertType] = useState<'success' | 'error'>('success');
+    const [_openSaveAlert, setOpenSaveAlert] = useState(false);
+    const [_alertMessage, setAlertMessage] = useState<string>('');
+    const [_alertType, setAlertType] = useState<'success' | 'error'>('success');
     const isInitState = useRef(true)
     const tableRef = useRef<TableGridRef>(null);
     const location = useLocation();
@@ -82,7 +79,7 @@ export default function StudentsEdit() {
 
     const handleTableChange = (
         updatedData: (CPTableType | ExtraTableType | ExtraMarkTableType | StudentTableType)[],
-        isDelete: boolean
+        _isDelete: boolean
     ) => {
         setInitRows(updatedData as StudentTableType[]);
         setHasUnsavedChanges(true);

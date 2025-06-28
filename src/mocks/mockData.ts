@@ -3,7 +3,7 @@ import type { ReportData } from '../types/Report';
 import type { Subject } from "../types/Subject";
 import type { CP } from "../types/CP";
 import type { Extra } from "../types/Extra";
-import type { ExtraMark, SubjectMarks } from "../types/MarkTypes";
+import type { ExtraMark } from "../types/MarkTypes";
 import type { NotesAttendance } from "../types/NotesAttendance";
 import type { User } from "../types/User";
 import type { School } from "../types/School";

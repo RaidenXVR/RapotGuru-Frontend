@@ -3,12 +3,10 @@ import type { School } from "../types/School";
 import { useEffect, useState } from "react";
 import { getSchoolList, setSchoolData, updateSchoolData } from "../api/schoolApi";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useUser } from "../context/userContext";
 
 
 export default function EditSchoolProfile() {
-    const [schools, setSchools] = useState<School[]>([]);
-    const { setUser } = useUser();
+    const [_schools, setSchools] = useState<School[]>([]);
     const navigate = useNavigate();
     const location = useLocation();
     const oldProfile: School | undefined = location.state?.oldProfile

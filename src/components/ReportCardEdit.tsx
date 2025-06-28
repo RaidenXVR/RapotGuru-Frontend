@@ -3,8 +3,7 @@ import { useEffect, useState } from "react";
 import type { Student } from "../types/Student";
 import { useNavigate, useParams } from "react-router-dom";
 import type { ReportData } from "../types/Report";
-import { getReportById, getStudentsByReport, getSubjectsByReport } from "../api/reportApi";
-import { useUser } from "../context/userContext";
+import { getReportById, getStudentsByReport } from "../api/reportApi";
 
 
 export default function ReportCardEdit() {

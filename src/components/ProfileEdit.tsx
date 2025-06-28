@@ -201,7 +201,7 @@ export default function ProfileEdit() {
                             </tr>
                         </thead>
                         <tbody>
-                            {paginatedSchools.map((school, index) => (
+                            {paginatedSchools.map((school) => (
                                 <tr key={school.npsn} className="hover:bg-slate-50">
                                     <td className="p-4 border-b border-slate-200 py-5">
                                         <p className="block font-semibold text-sm text-slate-800">{school.npsn}</p>

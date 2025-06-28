@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useUser } from '../context/userContext';
 import { getReportsByUser } from '../api/reportApi';
 import type { ReportData } from '../types/Report';

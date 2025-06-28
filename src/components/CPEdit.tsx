@@ -1,12 +1,11 @@
-import { Button, Card, Input, Select, Dialog, SelectOption, Alert } from "@material-tailwind/react";
-import { data, useLocation, useNavigate } from "react-router-dom";
+import { Button, Card, Input, Select, Dialog, Alert } from "@material-tailwind/react";
+import { useLocation, useNavigate } from "react-router-dom";
 import type { Subject } from "../types/Subject";
 import { useEffect, useRef, useState } from "react";
 import SpreadsheetTable, { type TableGridRef } from "./SpreadsheetTable";
 import type { CP } from "../types/CP";
 import type { CPTableType, ExtraMarkTableType, ExtraTableType, StudentTableType } from "../types/TableTypes";
 import { getCPBySubjectID, setCPBySubjectID, setSubjectByReport } from "../api/reportApi";
-import ConfirmDialog from "./ConfirmDialog";
 import { CheckCircleIcon } from "@heroicons/react/24/solid";
 import { ExclamationCircleIcon } from "@heroicons/react/24/solid";
 
@@ -38,7 +37,6 @@ import { ExclamationCircleIcon } from "@heroicons/react/24/solid";
 export default function CPEdit() {
     const location = useLocation();
     const currentSubject: Subject = location.state.currentSubject;
-    const subjects: Subject[] = location.state.subjects;
     const report_id: string = location.state.report_id;
     const [prevSubjectData, setPrevSubjectData] = useState<Subject>(currentSubject)
     const [subjectName, setSubjectName] = useState(currentSubject.subject_name);
@@ -51,7 +49,6 @@ export default function CPEdit() {
     const [cps, setCPs] = useState<CP[]>([])
     const [initCPs, setInitCPs] = useState<CPTableType[]>([])
     const [open, setOpen] = useState(false);
-    const [openDialog, setOpenDialog] = useState(false);
     const [openSaveAlert, setOpenSaveAlert] = useState(false);
     const [alertMessage, setAlertMessage] = useState<string>('');
     const [alertType, setAlertType] = useState<'success' | 'error'>('success');

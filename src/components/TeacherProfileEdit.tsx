@@ -16,7 +16,7 @@ export default function TeacherProfileEdit() {
         setUserData(nip, name).then((con) => {
             if (con) navigate("/profile")
             else setError(true)
-        }).catch((err) => {
+        }).catch((_err) => {
             setError(true)
         })
     }

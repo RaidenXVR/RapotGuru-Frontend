@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import type { Student } from '../types/Student';
 import { SpreadsheetTable, type ColHeaderGroupProps, type ColHeaderProps } from './SpreadsheetTable';
@@ -77,7 +77,7 @@ const ColDefs: (ColHeaderProps | ColHeaderGroupProps)[] = [
 export default function NotesEdit() {
     const location = useLocation();
     const { report_id } = location.state || {};
-    const [students, setStudents] = useState<Student[]>([]);
+    const [_students, setStudents] = useState<Student[]>([]);
     const [notesAttendance, setNotesAttendance] = useState<NotesAttendance[]>([]);
     const [initRows, setInitRows] = useState<NotesAttendanceTableType[]>([]);
     const [changedData, setChangedData] = useState<NotesAttendanceTableType[]>([]);

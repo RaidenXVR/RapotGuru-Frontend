@@ -139,7 +139,7 @@ export const handlers = [
     return HttpResponse.json({ status: 200 });
   }),
 
-  http.get('/api/school-list', ({ request }) => {
+  http.get('/api/school-list', () => {
     return HttpResponse.json(schools);
   }),
   http.get('/api/users/:id', ({ params }) => {
@@ -337,8 +337,7 @@ export const handlers = [
     return HttpResponse.json({ status: 200 })
   }),
 
-  http.post<SetSubjectParamType, SetSubjectBodyType>('/api/reports/:report_id/subjects', async ({ params, request }) => {
-    const { report_id } = params;
+  http.post<SetSubjectParamType, SetSubjectBodyType>('/api/reports/:report_id/subjects', async ({ request }) => {
     const { subject } = await request.json();
     const existing = subjects.filter((val) => val.subject_id === subject.subject_id);
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { SpreadsheetTable, type ColHeaderGroupProps, type ColHeaderProps } from "./SpreadsheetTable";
 import type { CPTableType, ExtraTableType, ExtraMarkTableType, StudentTableType, SubjectMarksTableTypes } from '../types/TableTypes';
 import { getCPsBySubjectIDs, getStudentsByReport, getSubjectMarksBySubjectIds, getSubjectsByReport, setSubjectMarks } from "../api/reportApi";
@@ -6,10 +6,10 @@ import { useLocation, useNavigate } from "react-router-dom";
 import type { Student } from "../types/Student";
 import type { Subject } from "../types/Subject";
 import type { CP } from "../types/CP";
-import { Alert, Button, Card, Dialog, Radio, Typography } from "@material-tailwind/react";
+import { Alert, Button, Card, Radio, Typography } from "@material-tailwind/react";
 import type { CPMark, OtherMark, SubjectMarks } from "../types/MarkTypes";
 import ConfirmDialog from "./ConfirmDialog";
-import { BellAlertIcon, CheckCircleIcon } from "@heroicons/react/24/solid";
+import { CheckCircleIcon } from "@heroicons/react/24/solid";
 import { ExclamationCircleIcon } from "@heroicons/react/24/outline";
 import { v4 as uuidv4 } from 'uuid';
 
@@ -92,7 +92,7 @@ export default function SubjectMarksEdit() {
     const [subjects, setSubjects] = useState<Subject[]>();
     const [currentSubject, setCurrentSubject] = useState<string>('')
     const [cps, setCPs] = useState<{ [subject_id: string]: CP[] }>({});
-    const [marks, setMarks] = useState<SubjectMarks[]>([]);
+    const [_marks, setMarks] = useState<SubjectMarks[]>([]);
     const [savedData, setSavedData] = useState<{ [subject_id: string]: SubjectMarksTableTypes[] }>({});
     const [changedData, setChangedData] = useState<{ [subject_id: string]: SubjectMarksTableTypes[] }>({});
     const [initRows, setInitRows] = useState<SubjectMarksTableTypes[]>([]);
@@ -207,7 +207,7 @@ export default function SubjectMarksEdit() {
     };
 
 
-    const handleTableChange = (updatedData: (CPTableType | ExtraTableType | ExtraMarkTableType | StudentTableType | SubjectMarksTableTypes)[], isDelete: boolean) => {
+    const handleTableChange = (updatedData: (CPTableType | ExtraTableType | ExtraMarkTableType | StudentTableType | SubjectMarksTableTypes)[], _isDelete: boolean) => {
         if (currentSubject) {
             setChangedData(prev => {
                 const oldData = prev[currentSubject] || [];

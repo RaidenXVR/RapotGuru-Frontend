@@ -1,6 +1,6 @@
 import { PencilSquareIcon, TrashIcon } from "@heroicons/react/16/solid";
 import { Button, Card, IconButton } from "@material-tailwind/react";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import type { Subject } from "../types/Subject";
 import { useEffect, useState } from "react";
 import { getSubjectsByReport, removeSubjectByID } from "../api/reportApi";
