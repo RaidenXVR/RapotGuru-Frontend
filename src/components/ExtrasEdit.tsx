@@ -321,7 +321,16 @@ export default function ExtrasEdit() {
                 <Card className="m-4 w-fit p-3">
                     <Button
                         variant='ghost'
-                        className="p-3 bg-green-600"
+                        className="group relative overflow-hidden
+                                bg-gradient-to-r from-green-500 to-emerald-600
+                                hover:from-green-600 hover:to-emerald-700
+                                shadow-lg shadow-green-500/25 hover:shadow-xl hover:shadow-green-500/30
+                                text-white font-semibold
+                                px-6 py-3 rounded-xl
+                                transition-all duration-300 ease-out
+                                transform hover:-translate-y-0.5 hover:scale-105
+                                focus:ring-4 focus:ring-green-200
+                                border-0"
                         onClick={handleSave}
                     >
                         <p className="text-white">Simpan Perubahan</p>
@@ -331,7 +340,16 @@ export default function ExtrasEdit() {
                 <Card className="m-4 w-fit p-3">
                     <Button
                         variant='ghost'
-                        className="p-3 bg-blue-600"
+                        className="group relative overflow-hidden
+                                bg-gradient-to-r from-blue-500 to-blue-600
+                                hover:from-blue-600 hover:to-blue-700
+                                shadow-lg shadow-blue-500/25 hover:shadow-xl hover:shadow-blue-500/30
+                                text-white font-semibold
+                                px-6 py-3 rounded-xl
+                                transition-all duration-300 ease-out
+                                transform hover:-translate-y-0.5 hover:scale-105
+                                focus:ring-4 focus:ring-blue-200
+                                border-0"
                         onClick={() => navigate(`..`)}
                     >
                         <p className="text-white">Kembali</p>

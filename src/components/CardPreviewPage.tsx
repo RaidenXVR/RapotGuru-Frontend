@@ -95,7 +95,7 @@ export default function CardPreviewPage() {
         for (let i = 0; i < studentData.length; i++) {
             const student = studentData[i];
             setCurrentStudent(student);
-            await new Promise((resolve) => setTimeout(resolve, 300));
+            await new Promise((resolve) => setTimeout(resolve, 300)); // Memberi sedikit waktu untuk React merender ulang
 
             // Card 1
             if (card1Ref.current) {
@@ -194,33 +194,52 @@ export default function CardPreviewPage() {
             setStudentData(data);
             setCurrentStudent(data[0]);
             setCurrentStudentIndex(0);
-        })
 
+            if (subjectsRes) {
+                setSubjects(subjectsRes);
+                const subjectIds = subjectsRes.map(subject => subject.subject_id);
+                const [marks, cpsData] = await Promise.all([
+                    getSubjectMarksBySubjectIds(subjectIds),
+                    getCPsBySubjectIDs(subjectIds)
+                ]);
+                setSubjectsMark(marks);
+                setCPs(cpsData);
+            }
 
-    }, [])
+            if (extrasRes) {
+                setExtras(extrasRes);
+                const extraIds = extrasRes.map(extra => extra.extra_id);
+                const marks = await getExtraMarksByExtraIds(extraIds);
+                setExtrasMark(marks);
+            }
+        }).catch(error => {
+            console.error("Error fetching data:", error);
+            // Handle error, mungkin tampilkan pesan kepada pengguna
+        });
+    }, [report_id]); // Tambahkan report_id sebagai dependency
 
     return (
-        <div>
-            <div className="flex flex-row justify-center  gap-5 items-center p-4 bg-gray-100 rounded-lg m-4 w-fit">
-                <Button className="bg-blue-500 text-white" variant='ghost' onClick={() => navigate('..')}>
+        <div className="min-h-screen bg-blue-gray-50 p-8">
+            <div className="flex flex-col md:flex-row justify-center items-center gap-4 p-4 mb-8 bg-white shadow-lg rounded-xl mx-auto max-w-5xl">
+                <Button className="bg-gray-700 hover:bg-gray-800 text-white font-semibold py-3 px-6 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105" onClick={() => navigate('..')}>
                     Kembali
                 </Button>
-                <Button className="bg-blue-500 text-white" variant='ghost' onClick={handleSavePDF}>
-                    Simpan Ke PDF
+                <Button className="bg-teal-600 hover:bg-teal-700 text-white font-semibold py-3 px-6 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105" onClick={handleSavePDF}>
+                    Simpan Ke PDF (Saat Ini)
                 </Button>
-                <Button className="bg-blue-500 text-white" variant='ghost' onClick={handleSaveAllPDF} >
+                <Button className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-6 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105" onClick={handleSaveAllPDF} >
                     Simpan Semua Ke PDF
                 </Button>
             </div>
-            <div className="flex flex-row justify-center items-center">
-                <div>
-                    <IconButton className="bg-blue-500 text-white p-2 rounded" onClick={() => setCurrentStudentIndex((prev) => prev - 1 < 0 ? studentData.length - 1 : prev - 1)}>
-                        <ArrowLeftCircleIcon className="h-6 w-6" />
-                    </IconButton>
-                </div>
-                <div className="flex flex-row justify-center items-center gap-4">
-                    <div ref={card1Ref}>
-                        <Card>
+            <div className="flex flex-col lg:flex-row justify-center items-center gap-8 lg:gap-12 mt-8">
+                <IconButton className="bg-blue-gray-700 hover:bg-blue-gray-800 text-white p-4 rounded-full shadow-lg transition duration-300 ease-in-out transform hover:scale-110"
+                    onClick={() => setCurrentStudentIndex((prev) => prev - 1 < 0 ? studentData.length - 1 : prev - 1)}>
+                    <ArrowLeftCircleIcon className="h-8 w-8" />
+                </IconButton>
+
+                <div className="flex flex-col lg:flex-row justify-center items-center gap-6">
+                    <div ref={card1Ref} className="shadow-2xl rounded-xl overflow-hidden bg-white border border-gray-200 transform transition-transform duration-300 hover:scale-[1.01]">
+                        <Card className="w-[8.5in] h-[11in] flex-shrink-0">
                             {(reportData && schoolProfile && user && subjectsMark && extrasMark && notesAttendance && studentData && currentStudent) &&
                                 (< StudentReportCard
                                     student_data={currentStudent}
@@ -232,8 +251,8 @@ export default function CardPreviewPage() {
                                 )}
                         </Card>
                     </div>
-                    <div ref={card2Ref}>
-                        <Card>
+                    <div ref={card2Ref} className="shadow-2xl rounded-xl overflow-hidden bg-white border border-gray-200 transform transition-transform duration-300 hover:scale-[1.01]">
+                        <Card className="w-[8.5in] h-[11in] flex-shrink-0">
                             {(reportData && schoolProfile && user && subjectsMark && extrasMark && notesAttendance && studentData && currentStudent) &&
                                 (< StudentReportCardPage2
                                     student_data={currentStudent}
@@ -250,11 +269,11 @@ export default function CardPreviewPage() {
                         </Card>
                     </div>
                 </div>
-                <div>
-                    <IconButton className="bg-blue-500 text-white p-2 rounded" onClick={() => setCurrentStudentIndex((prev) => prev + 1 >= studentData.length ? 0 : prev + 1)}>
-                        <ArrowRightCircleIcon className="h-6 w-6" />
-                    </IconButton>
-                </div>
+
+                <IconButton className="bg-blue-gray-700 hover:bg-blue-gray-800 text-white p-4 rounded-full shadow-lg transition duration-300 ease-in-out transform hover:scale-110"
+                    onClick={() => setCurrentStudentIndex((prev) => prev + 1 >= studentData.length ? 0 : prev + 1)}>
+                    <ArrowRightCircleIcon className="h-8 w-8" />
+                </IconButton>
             </div>
         </div>
     )

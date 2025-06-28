@@ -1,4 +1,4 @@
-import React from 'react';
+import { Button, Typography } from '@material-tailwind/react';
 
 type ConfirmDialogProps = {
     header: string;
@@ -11,43 +11,91 @@ type ConfirmDialogProps = {
     onDismiss: () => void;
     open: boolean;
 }
-import { Button, Dialog, Typography } from '@material-tailwind/react';
 
-export default function ConfirmDialog({ header, message, confirmText, confirmColor, onConfirm, dismissText, dismissColor, onDismiss, open }: ConfirmDialogProps) {
+export default function ConfirmDialog({ 
+    header, 
+    message, 
+    confirmText, 
+    confirmColor, 
+    onConfirm, 
+    dismissText, 
+    dismissColor, 
+    onDismiss, 
+    open 
+}: ConfirmDialogProps) {
+
+    if (!open) return null;
 
     return (
-        <div className="absolute top-0 left-0 w-full h-full bg-gray-100 opacity-50 z-10">
-            <Dialog
-                open={open}
-            >
-                <Dialog.Overlay
-
-                >
-                    <Dialog.Content>
-                        <div className='flex flex-col items-center justify-center h-full'>
-                            <Typography variant="h5" className="mb-4">
-                                <strong>{header}</strong>
+        <>
+            {/* Backdrop dengan animasi */}
+            <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 animate-in fade-in duration-200" />
+            
+            {/* Dialog Container */}
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+                <div className="relative w-full max-w-md mx-auto animate-in zoom-in-95 duration-200">
+                    {/* Dialog Card */}
+                    <div className="bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden">
+                        {/* Header Section */}
+                        <div className="px-6 pt-6 pb-4 text-center">
+                            <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-blue-50 to-indigo-100 rounded-full flex items-center justify-center">
+                                <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                            </div>
+                            
+                            <Typography variant="h4" className="text-gray-900 font-bold mb-2">
+                                {header}
                             </Typography>
                         </div>
-                        <Typography className="text-center mb-4">
-                            {message}
-                        </Typography>
-                        <div className='flex justify-center space-x-4'>
-                            <Dialog.DismissTrigger as={Button} onClick={onDismiss} className={`bg-${dismissColor}-500 text-white px-4 py-2 rounded hover:bg-blue-600`} >
-                                {dismissText || "Batalkan"}
-                            </Dialog.DismissTrigger>
-                            <Button className={`bg-${confirmColor}-500 text-white px-4 py-2 rounded hover:bg-red-600`}
-                                onClick={onConfirm}
-                            >
-                                {confirmText || "Konfirmasi"}
 
-                            </Button>
+                        {/* Message Section */}
+                        <div className="px-6 pb-6">
+                            <Typography className="text-gray-600 text-center leading-relaxed text-base">
+                                {message}
+                            </Typography>
                         </div>
-                    </Dialog.Content>
 
-                </Dialog.Overlay>
-            </Dialog>
+                        {/* Action Buttons */}
+                        <div className="px-6 pb-6">
+                            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+                                {/* Dismiss Button */}
+                                <Button
+                                    onClick={onDismiss}
+                                    variant="outline"
+                                    className={`
+                                        flex-1 py-3 px-6 rounded-xl font-semibold text-sm
+                                        border-2 border-${dismissColor}-200 text-${dismissColor}-700
+                                        hover:bg-${dismissColor}-50 hover:border-${dismissColor}-300
+                                        transition-all duration-200 ease-in-out
+                                        focus:ring-4 focus:ring-${dismissColor}-100
+                                        active:scale-98
+                                    `}
+                                >
+                                    {dismissText || "Batalkan"}
+                                </Button>
 
-        </div >
-    )
+                                {/* Confirm Button */}
+                                <Button
+                                    onClick={onConfirm}
+                                    className={`
+                                        flex-1 py-3 px-6 rounded-xl font-semibold text-sm
+                                        bg-gradient-to-r from-${confirmColor}-500 to-${confirmColor}-600
+                                        text-white shadow-lg shadow-${confirmColor}-500/25
+                                        hover:from-${confirmColor}-600 hover:to-${confirmColor}-700
+                                        hover:shadow-xl hover:shadow-${confirmColor}-500/30
+                                        transition-all duration-200 ease-in-out
+                                        focus:ring-4 focus:ring-${confirmColor}-200
+                                        active:scale-98
+                                    `}
+                                >
+                                    {confirmText || "Konfirmasi"}
+                                </Button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </>
+    );
 }

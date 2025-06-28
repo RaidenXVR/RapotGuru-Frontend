@@ -78,12 +78,21 @@ export default function ProfileEdit() {
 
             <TeacherProfile />
             <div className="w-full top-0 right-0 flex-col-reverse">
-                <div className="flex justify-start items-center p-3">
-                    <Button
-                        variant="ghost"
-                        onClick={() => navigate("/profile/edit-teacher")} className="flex top-0 right-0 ml-3 object-right p-3 bg-green-500">
-                        <h1>Edit Profil Guru</h1>
-                    </Button>
+                <Button
+                    variant="ghost"
+                    onClick={() => navigate("/profile/edit-teacher")} className="flex top-0 right-0 ml-3 object-right p-3 group relative overflow-hidden
+                                bg-gradient-to-r from-green-500 to-emerald-600
+                                hover:from-green-600 hover:to-emerald-700
+                                shadow-lg shadow-green-500/25 hover:shadow-xl hover:shadow-green-500/30
+                                text-white font-semibold
+                                px-6 py-3 rounded-xl
+                                transition-all duration-300 ease-out
+                                transform hover:-translate-y-0.5 hover:scale-105
+                                focus:ring-4 focus:ring-green-200
+                                border-0">
+                    <h1>Edit Profil Guru</h1>
+                </Button>
+        
                     <Button
                         variant="ghost"
                         onClick={() => {
@@ -95,14 +104,23 @@ export default function ProfileEdit() {
                     >
                         Logout
                     </Button>
-                </div>
+
             </div>
             <SchoolProfile />
             <div className="m-3 flex w-full">
                 <Button
                     variant="ghost"
                     onClick={() => navigate("/profile/new-school")}
-                    className="flex top-0 right-0 ml-3 object-right p-3 bg-green-500">
+                    className="group relative overflow-hidden
+                                bg-gradient-to-r from-green-500 to-emerald-600
+                                hover:from-green-600 hover:to-emerald-700
+                                shadow-lg shadow-green-500/25 hover:shadow-xl hover:shadow-green-500/30
+                                text-white font-semibold
+                                px-6 py-3 rounded-xl
+                                transition-all duration-300 ease-out
+                                transform hover:-translate-y-0.5 hover:scale-105
+                                focus:ring-4 focus:ring-green-200
+                                border-0">
                     <h1>+ Tambah Profil Sekolah</h1>
                 </Button>
             </div>
